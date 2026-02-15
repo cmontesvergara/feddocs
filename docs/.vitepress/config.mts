@@ -25,7 +25,7 @@ export default withMermaid(
       nav: [
         { text: 'Home', link: '/' },
         { text: 'Guía', link: '/guide/' },
-        { text: 'SSO Core', link: '/sso-team/sso-core/' }
+        { text: 'Equipos', link: '/teams' }
       ],
 
       sidebar: {

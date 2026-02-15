@@ -4,5 +4,11 @@
         "ref": "main",
         "path": "sync/feddocs",
         "label": "SSO Core"
+    },
+    "sso-portal": {
+        "repo": "https://github.com/cmontesvergara/sso-portal.git",
+        "ref": "main",
+        "path": "sync/feddocs",
+        "label": "SSO Portal"
     }
 }
