@@ -146,12 +146,13 @@ for (const [name, cfg] of Object.entries(sources)) {
         run(`git fetch origin`, cloneDir)
 
         let ref = cfg.ref
+        let remoteCommit
         if (process.env.DOCS_LOCK === 'true' && lock[name]) {
-            ref = lock[name].commit
+            remoteCommit = lock[name].commit
+        } else {
+            remoteCommit = execSync(`git rev-parse origin/${ref}`, { cwd: cloneDir })
+                .toString().trim()
         }
-
-        const remoteCommit = execSync(`git rev-parse origin/${ref}`, { cwd: cloneDir })
-            .toString().trim()
 
         // ── Validate source path ────────────────────────────────
         // Need to checkout first to read meta.json
