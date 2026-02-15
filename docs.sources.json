@@ -1,8 +1,8 @@
 {
     "sso-core": {
-        "repo": "https://github.com/your-org/your-repo.git",
+        "repo": "https://github.com/cmontesvergara/sso-core.git",
         "ref": "main",
         "path": "sync/feddocs",
-        "label": "Your Repo"
+        "label": "SSO Core"
     }
 }
