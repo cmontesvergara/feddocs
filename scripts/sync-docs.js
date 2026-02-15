@@ -276,11 +276,66 @@ function generateProjectIndex(meta, teamSlug, projectSlug) {
     return content
 }
 
-// ── Generate team-based sidebar ─────────────────────────────
+// ── NEW: Generate Team Index Pages ──────────────────────────
+const teamsContent = []
+
+for (const [teamSlug, team] of Object.entries(teams)) {
+    const teamDir = path.join(DOCS_DIR, teamSlug)
+    if (!fs.existsSync(teamDir)) {
+        fs.mkdirSync(teamDir, { recursive: true })
+    }
+
+    // Generate Team Home (docs/<team>/index.md)
+    let teamIndex = `# ${team.label}\n\n`
+    teamIndex += `Proyectos documentados de este equipo:\n\n`
+    teamIndex += `| Proyecto | Descripción |\n`
+    teamIndex += `| :--- | :--- |\n`
+
+    for (const project of team.projects) {
+        // Read project description from meta.json if possible, or just use label
+        const metaPath = path.join(project.dir, '../..', 'sync/_sources', Object.keys(process.env.DOCS_LOCK === 'true' ? lock : sources).find(key => sources[key]?.path && project.dir.includes(slugify(sources[key].path))) || '', 'meta.json')
+        // Simplified: just link to project
+        teamIndex += `| [**${project.label}**](./${project.name}/) | Documentación de ${project.label} |\n`
+    }
+
+    fs.writeFileSync(path.join(teamDir, 'index.md'), teamIndex)
+    console.log(`  📄 ${teamSlug}/index.md`)
+
+    teamsContent.push(`| [**${team.label}**](./${teamSlug}/) | ${team.projects.length} proyectos |`)
+}
+
+// ── NEW: Generate Global Teams List ─────────────────────────
+let globalTeamsIndex = `# Equipos\n\n`
+if (teamsContent.length > 0) {
+    globalTeamsIndex += `Estructura de documentación por equipos:\n\n`
+    globalTeamsIndex += `| Equipo | Proyectos |\n`
+    globalTeamsIndex += `| :--- | :--- |\n`
+    globalTeamsIndex += teamsContent.join('\n')
+} else {
+    globalTeamsIndex += `No hay equipos sincronizados aún.`
+}
+fs.writeFileSync(path.join(DOCS_DIR, 'teams.md'), globalTeamsIndex)
+console.log(`  📄 teams.md`)
+
+
+// ── Generate sidebar ────────────────────────────────────────
 
 const sidebar = {}
 
 for (const [teamSlug, team] of Object.entries(teams)) {
+
+    // Sidebar for Team Home (/sso-team/)
+    sidebar[`/${teamSlug}/`] = [
+        {
+            text: team.label,
+            items: team.projects.map(p => ({
+                text: p.label,
+                link: `/${teamSlug}/${p.name}/`
+            }))
+        }
+    ]
+
+    // Sidebar for each Project
     for (const project of team.projects) {
         const basePath = `/${teamSlug}/${project.name}`
 
@@ -300,13 +355,15 @@ for (const [teamSlug, team] of Object.entries(teams)) {
             }
         }
 
+        // Project-level sidebar matches URLs starting with /team/project/
         sidebar[`${basePath}/`] = [
             {
                 text: team.label,
+                link: `/${teamSlug}/`,
                 items: [
                     {
                         text: project.label,
-                        collapsed: false,
+                        // collapsed: false, // VitePress default is fine
                         items
                     }
                 ]
