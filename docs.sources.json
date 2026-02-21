@@ -10,5 +10,11 @@
         "ref": "main",
         "path": "sync/feddocs",
         "label": "SSO Portal"
+    },
+    "sso-federated-app-template": {
+        "repo": "https://github.com/cmontesvergara/sso-federated-app-template.git",
+        "ref": "main",
+        "path": "sync/feddocs",
+        "label": "SSO Federated App Template"
     }
 }
