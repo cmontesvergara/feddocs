@@ -16,5 +16,11 @@
         "ref": "main",
         "path": "sync/feddocs",
         "label": "SSO Federated App Template"
+    },
+    "doc-forge": {
+        "repo": "https://github.com/cmontesvergara/doc-forge.git",
+        "ref": "main",
+        "path": "sync/feddocs",
+        "label": "Doc Forge"
     }
 }
