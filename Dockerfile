@@ -1,6 +1,6 @@
 # Etapa 1: Build
 FROM public.ecr.aws/docker/library/node:20 AS build
-ARG CACHEBUST=1
+ARG CACHEBUST=0
 
 WORKDIR /app
 
