@@ -24,12 +24,12 @@ integrarla al portal central de documentación.
 
 ## Lo que debes hacer PRIMERO
 
-Lee el contrato de federación para AI Agents publicado en:
-https://{dominio-del-portal}/guide/contract-agents.html
+Lee el contrato de federación para AI Agents (V3) publicado en:
+https://{dominio-del-portal}/guide/contract-agents-v3.html
 
 Ese documento contiene las reglas absolutas, los templates exactos de
-cada archivo, los anti-patrones, las features de markdown permitidas
-y prohibidas, y el checklist final de validación.
+cada archivo, los anti-patrones, y las exigencias de auditoría como el
+sync-lock.json y el agent-instructions.md.
 
 Debes seguir ese contrato al pie de la letra. No improvises ni
 inventes reglas propias.

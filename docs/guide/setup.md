@@ -110,7 +110,7 @@ export default defineConfig({
           items: [
             { text: 'Introducción', link: '/guide/' },
             { text: 'Setup', link: '/guide/setup' },
-            { text: 'Contrato', link: '/guide/contract' },
+            { text: 'Contrato V3', link: '/guide/contract-v3' },
             { text: 'Agregar Source', link: '/guide/add-source' },
             { text: 'Sync Script', link: '/guide/sync-script' },
           ]
@@ -230,4 +230,4 @@ Ver [Sync Script → Cache y Performance](./sync-script#cache-y-performance) par
 
 ## Siguiente paso
 
-→ [Contrato de Federación](./contract) — reglas que cada repositorio debe cumplir
+→ [Contrato de Federación V3](./contract-v3) — reglas que cada repositorio debe cumplir
