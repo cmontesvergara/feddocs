@@ -12,17 +12,29 @@ Guía paso a paso para federar un nuevo repositorio al portal.
 
 ## Paso 1: Crear la estructura en el repositorio fuente
 
-En el repositorio que quieres federar, crea la carpeta `sync/feddocs/`:
+En el repositorio que quieres federar, crea las carpetas:
 
 ```sh
 mkdir -p sync/feddocs
 ```
 
-Crea los 6 archivos obligatorios:
+Crea los archivos obligatorios base en `sync/feddocs/`:
 
 ```sh
 touch sync/feddocs/{onboarding,architecture,integration,operations,references}.md
 touch sync/feddocs/meta.json
+```
+
+Opcionalmente, crea el contrato de API si expone endpoints:
+```sh
+touch sync/feddocs/openapi.yaml
+```
+
+Crea los archivos de auditoría obligatorios para agentes en `sync/`:
+
+```sh
+touch sync/sync-lock.json
+touch sync/agent-instructions.md
 ```
 
 ---
@@ -55,7 +67,7 @@ Si otro proyecto tiene el mismo `ownerTeam`, aparecerán juntos.
 
 ## Paso 3: Escribir la documentación
 
-Llena cada archivo `.md` según el [contrato](./contract). Un ejemplo mínimo:
+Llena cada archivo `.md` según el [contrato de Federación V3](./contract-v3). Un ejemplo mínimo:
 
 ::: details onboarding.md (ejemplo)
 ```md

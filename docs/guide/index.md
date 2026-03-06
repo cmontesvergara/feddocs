@@ -32,7 +32,8 @@ docs-portal/
 │   │       ├── architecture.md   ← Diagrama y decisiones
 │   │       ├── integration.md    ← APIs y consumo
 │   │       ├── operations.md     ← Deploy y monitoreo
-│   │       └── references.md     ← Links y recursos
+│   │       ├── references.md     ← Links y recursos
+│   │       └── openapi.yaml      ← (Opcional) Explorador API (Playground)
 │   ├── index.md                  ← Home page
 │   └── .generated-sidebar.json   ← Sidebar auto-generado
 ├── docs.sources.json             ← Repos a sincronizar
@@ -46,6 +47,7 @@ docs-portal/
 | Sección | Descripción |
 |---|---|
 | [Setup del Portal](./setup) | Cómo instalar y configurar el portal desde cero |
-| [Contrato de Federación](./contract) | Reglas que cada repositorio debe cumplir |
+| [Contrato de Federación](./contract-v3) | Reglas que cada repositorio debe cumplir |
 | [Agregar un Source](./add-source) | Paso a paso para federar un nuevo repositorio |
+| [Explorador API (Playground)](./playground) | Cómo crear Playgrounds accionables usando OpenAPI |
 | [Sync Script](./sync-script) | Cómo funciona el motor de sincronización |

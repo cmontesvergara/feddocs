@@ -35,8 +35,11 @@ export default withMermaid(
             items: [
               { text: 'Introducción', link: '/guide/' },
               { text: 'Setup del Portal', link: '/guide/setup' },
-              { text: 'Contrato de Federación', link: '/guide/contract' },
-              { text: 'Contrato para AI Agents', link: '/guide/contract-agents' },
+              { text: 'Contrato de Federación (v2)', link: '/guide/contract' },
+              { text: 'Contrato para AI Agents (v2)', link: '/guide/contract-agents' },
+              { text: 'Contrato de Federación v3', link: '/guide/contract-v3' },
+              { text: 'Contrato para AI Agents v3', link: '/guide/contract-agents-v3' },
+              { text: 'Explorador API (Playground)', link: '/guide/playground' },
               { text: 'Prompt Inicial', link: '/guide/prompt' },
               { text: 'Agregar un Source', link: '/guide/add-source' },
               { text: 'Sync Script', link: '/guide/sync-script' },

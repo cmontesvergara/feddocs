@@ -94,7 +94,8 @@ docs/<ownerTeam>/<project>/
 ├── architecture.md
 ├── integration.md
 ├── operations.md
-└── references.md
+├── references.md
+└── openapi.yaml      ← Opcional: Generado de Playground (OpenCollection)
 ```
 
 ### `.generated-sidebar.json`

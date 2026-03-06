@@ -146,12 +146,13 @@ for (const [name, cfg] of Object.entries(sources)) {
         run(`git fetch origin`, cloneDir)
 
         let ref = cfg.ref
+        let remoteCommit
         if (process.env.DOCS_LOCK === 'true' && lock[name]) {
-            ref = lock[name].commit
+            remoteCommit = lock[name].commit
+        } else {
+            remoteCommit = execSync(`git rev-parse origin/${ref}`, { cwd: cloneDir })
+                .toString().trim()
         }
-
-        const remoteCommit = execSync(`git rev-parse origin/${ref}`, { cwd: cloneDir })
-            .toString().trim()
 
         // ── Validate source path ────────────────────────────────
         // Need to checkout first to read meta.json
@@ -219,8 +220,69 @@ for (const [name, cfg] of Object.entries(sources)) {
             }
         }
 
+        let hasPlayground = false;
+        // ── NEW: Playground for openapi.yaml ────────────────────
+        const openapiSrc = path.join(srcDocs, 'openapi.yaml');
+        if (fs.existsSync(openapiSrc)) {
+            const playgroundDir = path.join(DOCS_DIR, 'public', 'playground', projectSlug);
+            if (!fs.existsSync(playgroundDir)) {
+                fs.mkdirSync(playgroundDir, { recursive: true });
+            }
+            const openapiDest = path.join(playgroundDir, 'openapi.yaml');
+            fs.copyFileSync(openapiSrc, openapiDest);
+
+            const collectionDest = path.join(playgroundDir, 'collection.yaml');
+            try {
+                execSync(`node scripts/convert-oapi-to-ocollect.mjs "${openapiDest}" "${collectionDest}"`, { stdio: 'inherit' });
+
+                const indexHtmlContent = `<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${projectLabel} - API Documentation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #opencollection-container {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.opencollection.com/docs.css">
+    <script src="https://cdn.opencollection.com/docs.js"></script>
+</head>
+
+<body>
+    <div id="opencollection-container"></div>
+    <script>
+        fetch('collection.yaml')
+            .then(res => res.text())
+            .then(collectionData => {
+                new window.OpenCollection({
+                    target: document.getElementById('opencollection-container'),
+                    opencollection: collectionData,
+                    theme: 'light'
+                });
+            });
+    </script>
+</body>
+
+</html>`;
+                fs.writeFileSync(path.join(playgroundDir, 'index.html'), indexHtmlContent);
+                console.log(`  🎮 Playground generated at docs/public/playground/${projectSlug}`);
+                hasPlayground = true;
+            } catch (err) {
+                console.log(`  ⚠️ Failed to generate playground for ${projectSlug}: ${err.message}`);
+            }
+        }
+
         // Generate project index page
-        const indexContent = generateProjectIndex(meta, teamSlug, projectSlug)
+        const indexContent = generateProjectIndex(meta, teamSlug, projectSlug, hasPlayground)
         fs.writeFileSync(path.join(destDir, 'index.md'), indexContent)
         console.log(`  📄 ${teamSlug}/${projectSlug}/index.md`)
 
@@ -247,7 +309,7 @@ for (const [name, cfg] of Object.entries(sources)) {
 /**
  * Generate project index.md from meta.json.
  */
-function generateProjectIndex(meta, teamSlug, projectSlug) {
+function generateProjectIndex(meta, teamSlug, projectSlug, hasPlayground) {
     const basePath = `/${teamSlug}/${projectSlug}`
     let content = `# ${meta.name || projectSlug}\n\n`
 
@@ -270,6 +332,10 @@ function generateProjectIndex(meta, teamSlug, projectSlug) {
     content += `| [Integration](${basePath}/integration) | APIs, contratos, autenticación |\n`
     content += `| [Operations](${basePath}/operations) | Deploy, monitoreo, alertas |\n`
     content += `| [References](${basePath}/references) | APIs, SDKs, links externos |\n`
+
+    if (hasPlayground) {
+        content += `| <a href="/playground/${projectSlug}/index.html" target="_blank">Playground API ↗</a> | Explorador interactivo de endpoints de la API |\n`
+    }
 
     content += `\n`
     return content
