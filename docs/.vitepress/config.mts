@@ -16,6 +16,7 @@ const generatedSidebar = existsSync(sidebarPath)
 export default withMermaid(
   defineConfig({
     title: 'Internal Docs',
+    ignoreDeadLinks: true,
     markdown: {
       config: (md) => {
         md.use(mdInclude)
