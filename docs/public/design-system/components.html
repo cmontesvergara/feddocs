@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bigso · Design System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { fontFamily: { sans: ['Inter','system-ui','sans-serif'], mono: ['"JetBrains Mono"','monospace'] } } }
+    }
+  </script>
+  <style>
+    :root {
+      --p: #4F46E5; --ph: #4338CA; --pl: #EEF2FF;
+      --accent: #10B981; --warn: #F59E0B; --err: #F43F5E;
+      --bg: #FFFFFF; --bg2: #F8FAFC;
+      --t1: #0F172A; --t2: #475569; --t3: #94A3B8;
+      --border: #E2E8F0; --bh: #CBD5E1;
+    }
+    .dark {
+      --p: #818CF8; --ph: #A5B4FC; --pl: #1e1b4b;
+      --bg: #020617; --bg2: #0F172A;
+      --t1: #F8FAFC; --t2: #94A3B8; --t3: #475569;
+      --border: #1e293b; --bh: #334155;
+    }
+
+    * { box-sizing: border-box; margin: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg2);
+      color: var(--t1);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    :focus-visible { outline: 2px solid var(--p); outline-offset: 2px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+
+    /* ── Layout ── */
+    .layout { display: flex; min-height: 100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      background: var(--bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      z-index: 40;
+      transition: transform 0.25s ease;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-logo svg { color: var(--p); }
+    .sidebar-logo span { font-size: 15px; font-weight: 700; color: var(--t1); letter-spacing: -0.02em; }
+    .sidebar-logo em { font-style: normal; font-size: 10px; font-weight: 500; color: var(--t3); margin-left: 4px; background: var(--border); padding: 2px 6px; border-radius: 999px; }
+
+    .sidebar-section { padding: 16px 12px 4px; font-size: 10px; font-weight: 600; color: var(--t3); letter-spacing: 0.08em; text-transform: uppercase; }
+
+    .sidebar-link {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 12px; margin: 1px 4px;
+      border-radius: 6px;
+      font-size: 13px; font-weight: 500;
+      color: var(--t2);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.12s, color 0.12s;
+    }
+    .sidebar-link:hover { background: var(--bg2); color: var(--t1); }
+    .sidebar-link.active { background: color-mix(in srgb, var(--p) 12%, transparent); color: var(--p); }
+    .sidebar-link .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.5; flex-shrink: 0; }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding: 12px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .version-badge {
+      font-size: 11px; font-weight: 500; color: var(--t3);
+      background: var(--bg2); border: 1px solid var(--border);
+      padding: 3px 8px; border-radius: 999px;
+    }
+
+    /* ── Main ── */
+    .main { margin-left: 240px; flex: 1; }
+
+    /* ── Top bar ── */
+    .topbar {
+      position: sticky; top: 0; z-index: 30;
+      background: color-mix(in srgb, var(--bg) 90%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 56px;
+    }
+
+    .topbar-breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--t3); }
+    .topbar-breadcrumb span { color: var(--t1); font-weight: 500; }
+
+    .topbar-actions { display: flex; align-items: center; gap: 8px; }
+
+    .icon-btn {
+      width: 32px; height: 32px; border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--t2);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s, color 0.12s;
+    }
+    .icon-btn:hover { background: var(--bg2); border-color: var(--bh); color: var(--t1); }
+
+    /* ── Sections ── */
+    .section { padding: 56px 40px; border-bottom: 1px solid var(--border); }
+    .section:last-child { border-bottom: none; }
+
+    .section-header { margin-bottom: 40px; }
+    .section-tag { font-size: 11px; font-weight: 600; color: var(--p); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+    .section-title { font-size: 28px; font-weight: 700; color: var(--t1); letter-spacing: -0.03em; margin-bottom: 8px; }
+    .section-desc { font-size: 14px; color: var(--t2); line-height: 1.6; max-width: 560px; }
+
+    /* ── Preview boxes ── */
+    .preview {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .preview-label {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px; font-weight: 600;
+      color: var(--t3);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .preview-body {
+      padding: 32px;
+      display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+    }
+
+    .preview-body.stack { flex-direction: column; align-items: stretch; gap: 16px; }
+    .preview-body.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .preview-body.center { justify-content: center; }
+
+    /* ── Copy button ── */
+    .copy-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 500; color: var(--t3);
+      background: none; border: none; cursor: pointer;
+      padding: 2px 6px; border-radius: 4px;
+      transition: color 0.12s, background 0.12s;
+    }
+    .copy-btn:hover { color: var(--p); background: color-mix(in srgb, var(--p) 8%, transparent); }
+
+    /* ── Color swatches ── */
+    .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; padding: 32px; }
+
+    .swatch {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .swatch:hover { transform: translateY(-2px); box-shadow: 0 8px 24px -4px rgba(0,0,0,0.15); }
+    .swatch-color { height: 64px; }
+    .swatch-info { padding: 8px 10px; background: var(--bg); }
+    .swatch-name { font-size: 11px; font-weight: 600; color: var(--t1); }
+    .swatch-hex { font-size: 10px; color: var(--t3); font-family: 'JetBrains Mono', monospace; }
+    .swatch-role { font-size: 10px; color: var(--t3); margin-top: 2px; }
+
+    /* ── Typography scale ── */
+    .type-row {
+      display: flex; align-items: baseline; gap: 24px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .type-row:last-child { border-bottom: none; }
+    .type-meta { width: 160px; flex-shrink: 0; }
+    .type-meta-name { font-size: 12px; font-weight: 600; color: var(--t1); font-family: 'JetBrains Mono', monospace; }
+    .type-meta-spec { font-size: 11px; color: var(--t3); margin-top: 2px; }
+    .type-sample { flex: 1; color: var(--t1); }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 10px 16px;
+      font-size: 14px; font-weight: 500;
+      border-radius: 6px;
+      border: none; cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.15s, opacity 0.15s;
+      text-decoration: none;
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+    .btn-primary { background: var(--p); color: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .btn-primary:hover { background: var(--ph); box-shadow: 0 4px 12px color-mix(in srgb, var(--p) 30%, transparent); transform: translateY(-1px); }
+
+    .btn-secondary { background: var(--bg); color: var(--t1); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: var(--bg2); border-color: var(--bh); }
+
+    .btn-ghost { background: transparent; color: var(--p); }
+    .btn-ghost:hover { background: color-mix(in srgb, var(--p) 8%, transparent); }
+
+    .btn-destructive { background: #F43F5E; color: white; }
+    .btn-destructive:hover { background: #e11d48; }
+
+    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 5px; }
+    .btn-lg { padding: 14px 24px; font-size: 16px; border-radius: 8px; }
+    .btn-xl { padding: 16px 28px; font-size: 17px; border-radius: 10px; }
+
+    .btn-loading { position: relative; pointer-events: none; }
+    .btn-loading::after {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 8px;
+      font-size: 12px; font-weight: 500;
+      border-radius: 4px;
+      letter-spacing: 0.02em;
+    }
+    .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+    .badge-primary { background: color-mix(in srgb, var(--p) 12%, transparent); color: var(--p); }
+    .badge-success { background: #d1fae5; color: #065f46; }
+    .dark .badge-success { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+    .badge-warning { background: #fef3c7; color: #92400e; }
+    .dark .badge-warning { background: rgba(245,158,11,0.15); color: #fcd34d; }
+    .badge-error { background: #ffe4e6; color: #9f1239; }
+    .dark .badge-error { background: rgba(244,63,94,0.15); color: #fda4af; }
+    .badge-neutral { background: var(--bg2); color: var(--t2); border: 1px solid var(--border); }
+
+    /* ── Inputs ── */
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .label { font-size: 13px; font-weight: 500; color: var(--t1); }
+    .hint { font-size: 12px; color: var(--t2); }
+    .input {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 14px; font-family: inherit;
+      color: var(--t1);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .input::placeholder { color: var(--t3); }
+    .input:hover { border-color: var(--bh); }
+    .input:focus { border-color: var(--p); box-shadow: 0 0 0 3px color-mix(in srgb, var(--p) 15%, transparent); }
+    .input:disabled { opacity: 0.5; cursor: not-allowed; background: var(--bg2); }
+    .input.error { border-color: #F43F5E; }
+    .input.error:focus { box-shadow: 0 0 0 3px rgba(244,63,94,0.15); }
+    .error-msg { font-size: 12px; color: #F43F5E; display: flex; align-items: center; gap: 4px; }
+
+    .input-icon-wrap { position: relative; }
+    .input-icon-wrap .input { padding-left: 38px; }
+    .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--t3); pointer-events: none; }
+
+    select.input { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='%2394A3B8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; padding-right: 36px; }
+
+    textarea.input { resize: vertical; min-height: 100px; }
+
+    /* Custom checkbox */
+    .check-wrap { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .check-wrap input[type=checkbox] {
+      width: 18px; height: 18px;
+      accent-color: var(--p);
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .check-wrap span { font-size: 14px; color: var(--t1); }
+
+    /* Toggle */
+    .toggle-row { display: flex; align-items: center; gap: 12px; }
+    .toggle { position: relative; width: 44px; height: 24px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .track {
+      position: absolute; inset: 0;
+      background: var(--border);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .toggle input:checked + .track { background: var(--p); }
+    .knob {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 18px; height: 18px;
+      background: white;
+      border-radius: 50%;
+      pointer-events: none;
+      transition: transform 0.15s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .toggle input:checked ~ .knob { transform: translateX(20px); }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+    }
+    .card:hover {
+      box-shadow: 0 12px 32px -8px rgba(79,70,229,0.12);
+      border-color: var(--bh);
+      transform: translateY(-2px);
+    }
+    .card-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+    }
+    .card-title { font-size: 16px; font-weight: 600; color: var(--t1); margin-bottom: 6px; }
+    .card-desc { font-size: 13px; color: var(--t2); line-height: 1.6; margin-bottom: 16px; }
+    .card-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 13px; font-weight: 500; color: var(--p);
+      text-decoration: none;
+      transition: gap 0.15s;
+    }
+    .card-link:hover { gap: 8px; }
+
+    /* ── Alerts ── */
+    .alert {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+    }
+    .alert-icon { flex-shrink: 0; margin-top: 1px; }
+    .alert-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .alert-desc { font-size: 13px; line-height: 1.5; }
+
+    .alert-success { background: #f0fdf4; border-color: #bbf7d0; color: #14532d; }
+    .dark .alert-success { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.25); color: #6ee7b7; }
+    .alert-warning { background: #fffbeb; border-color: #fde68a; color: #78350f; }
+    .dark .alert-warning { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.25); color: #fcd34d; }
+    .alert-error { background: #fff1f2; border-color: #fecdd3; color: #881337; }
+    .dark .alert-error { background: rgba(244,63,94,0.08); border-color: rgba(244,63,94,0.25); color: #fda4af; }
+    .alert-info { background: #eff6ff; border-color: #bfdbfe; color: #1e3a5f; }
+    .dark .alert-info { background: rgba(129,140,248,0.08); border-color: rgba(129,140,248,0.25); color: #a5b4fc; }
+
+    /* ── Shadows visual ── */
+    .shadow-demo {
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      font-size: 12px; font-weight: 600; color: var(--t2);
+    }
+
+    /* ── Spacing visual ── */
+    .space-bar { height: 24px; background: color-mix(in srgb, var(--p) 20%, transparent); border-radius: 4px; display: flex; align-items: center; padding: 0 8px; font-size: 11px; font-weight: 500; color: var(--p); }
+
+    /* ── Code block ── */
+    .code-block {
+      background: #0d1117;
+      border: 1px solid #21262d;
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #e6edf3;
+      overflow-x: auto;
+      line-height: 1.7;
+    }
+    .code-block .kw { color: #ff7b72; }
+    .code-block .str { color: #a5d6ff; }
+    .code-block .val { color: #79c0ff; }
+    .code-block .cm { color: #6e7681; }
+
+    /* ── Motion demo ── */
+    @keyframes fadeSlideUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes scaleIn { from { opacity:0; transform:scale(0.92); } to { opacity:1; transform:scale(1); } }
+    @keyframes slideRight { from { transform:translateX(-100%); } to { transform:translateX(0); } }
+    @keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.05); } }
+
+    .motion-box {
+      background: color-mix(in srgb, var(--p) 10%, transparent);
+      border: 1px solid color-mix(in srgb, var(--p) 30%, transparent);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      font-size: 13px; font-weight: 500; color: var(--p);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── Tooltip ── */
+    .tooltip-wrap { position: relative; display: inline-flex; }
+    .tooltip {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%; transform: translateX(-50%);
+      background: var(--t1);
+      color: var(--bg);
+      font-size: 12px; font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%; left: 50%; transform: translateX(-50%);
+      border: 4px solid transparent;
+      border-top-color: var(--t1);
+    }
+    .tooltip-wrap:hover .tooltip { opacity: 1; }
+
+    /* ── Avatar ── */
+    .avatar {
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    /* ── Progress ── */
+    .progress-track {
+      height: 6px; background: var(--bg2); border-radius: 999px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; background: var(--p); border-radius: 999px;
+      transition: width 1s ease;
+    }
+
+    /* ── Mobile sidebar overlay ── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 39;
+    }
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.open { display: block; }
+      .main { margin-left: 0; }
+      .topbar { padding: 0 20px; }
+      .section { padding: 40px 20px; }
+      .preview-body { padding: 20px; }
+      .swatch-grid { padding: 20px; }
+    }
+
+    /* ── Icon Box ── */
+    .icon-box {
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--t2);
+      transition: all 0.15s ease;
+    }
+    .icon-box:hover { background: color-mix(in srgb, var(--p) 8%, transparent); border-color: var(--p); color: var(--p); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SSO WIDGET STYLES
+    ═══════════════════════════════════════════════════════════════ */
+
+    /* SSO Widget - Main */
+    .sso-widget {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 16px;
+      padding: 32px; max-width: 400px; width: 100%;
+      transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+    }
+    .sso-widget:hover { box-shadow: var(--shadow-lg); border-color: var(--bh); transform: translateY(-2px); }
+
+    .sso-header { text-align: center; margin-bottom: 28px; }
+    .sso-icon { width: 56px; height: 56px; margin: 0 auto 16px; background: linear-gradient(135deg, var(--p), var(--ph)); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px -8px color-mix(in srgb, var(--p) 40%, transparent); }
+    .sso-icon svg { color: white; }
+    .sso-title { font-size: 20px; font-weight: 700; color: var(--t1); margin-bottom: 6px; letter-spacing: -0.02em; }
+    .sso-subtitle { font-size: 14px; color: var(--t2); line-height: 1.5; }
+
+    .sso-providers { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+    .sso-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 14px 20px; font-size: 14px; font-weight: 500; font-family: inherit; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); color: var(--t1); cursor: pointer; transition: all 0.15s ease; }
+    .sso-btn:hover { border-color: var(--bh); background: var(--bg2); transform: translateY(-1px); box-shadow: 0 4px 12px -4px rgba(0,0,0,0.08); }
+    .sso-btn:active { transform: translateY(0); }
+    .sso-btn-google:hover { border-color: #E2E8F0; background: #fff; }
+    .sso-btn-microsoft:hover { border-color: #0078D4; background: #f0f6ff; }
+    .sso-btn-github:hover { border-color: #24292f; background: #f6f8fa; }
+    .sso-btn-icon { width: 20px; height: 20px; flex-shrink: 0; }
+    .sso-btn-text { flex: 1; text-align: left; }
+
+    .sso-divider { display: flex; align-items: center; gap: 16px; margin: 20px 0; }
+    .sso-divider::before, .sso-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .sso-divider span { font-size: 12px; color: var(--t3); font-weight: 500; }
+
+    .sso-email-form { display: flex; flex-direction: column; gap: 12px; }
+    .sso-input { width: 100%; padding: 12px 14px; font-size: 14px; font-family: inherit; color: var(--t1); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+    .sso-input::placeholder { color: var(--t3); }
+    .sso-input:hover { border-color: var(--bh); }
+    .sso-input:focus { border-color: var(--p); box-shadow: 0 0 0 3px color-mix(in srgb, var(--p) 15%, transparent); }
+
+    .sso-submit { width: 100%; padding: 12px 20px; font-size: 14px; font-weight: 600; font-family: inherit; border-radius: 8px; border: none; background: var(--p); color: white; cursor: pointer; transition: background 0.15s, box-shadow 0.15s, transform 0.15s; }
+    .sso-submit:hover { background: var(--ph); box-shadow: 0 4px 12px color-mix(in srgb, var(--p) 30%, transparent); transform: translateY(-1px); }
+
+    .sso-footer { text-align: center; margin-top: 20px; font-size: 12px; color: var(--t3); }
+    .sso-footer a { color: var(--p); text-decoration: none; font-weight: 500; }
+    .sso-footer a:hover { text-decoration: underline; }
+    .icon-google { background: white; border-radius: 4px; }
+    .dark .icon-google { background: transparent; }
+
+    /* Email/Password Card */
+    .ep-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-sm); width: 100%; max-width: 380px; overflow: hidden; }
+    .ep-card:hover { box-shadow: var(--shadow-md); }
+    .ep-head { padding: 24px 28px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+    .ep-brand-icon { width: 38px; height: 38px; border-radius: 9px; background: color-mix(in srgb, var(--p) 10%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .ep-brand-icon svg { width: 18px; height: 18px; color: var(--p); }
+    .ep-head-title { font-size: 14px; font-weight: 700; color: var(--t1); letter-spacing: -0.01em; }
+    .ep-head-sub { font-size: 11px; color: var(--t3); margin-top: 1px; }
+    .ep-body { padding: 24px 28px; }
+    .ep-form-title { font-size: 17px; font-weight: 700; color: var(--t1); letter-spacing: -0.02em; margin: 0 0 4px; }
+    .ep-form-sub { font-size: 13px; color: var(--t2); margin: 0 0 20px; line-height: 1.5; }
+    .ep-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    .ep-label { font-size: 12px; font-weight: 600; color: var(--t1); display: flex; align-items: center; justify-content: space-between; }
+    .ep-forgot-link { font-size: 12px; font-weight: 500; color: var(--p); cursor: pointer; }
+    .ep-forgot-link:hover { color: var(--ph); }
+    .ep-input-wrap { position: relative; }
+    .ep-input-wrap .ep-ico { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--t3); pointer-events: none; }
+    .ep-input { width: 100%; padding: 9px 12px 9px 34px; font-size: 14px; font-family: inherit; color: var(--t1); background: var(--bg); border: 1px solid var(--border); border-radius: 6px; outline: none; transition: border-color 0.15s, box-shadow 0.15s; box-sizing: border-box; }
+    .ep-input::placeholder { color: var(--t3); }
+    .ep-input:hover { border-color: var(--bh); }
+    .ep-input:focus { border-color: var(--p); box-shadow: 0 0 0 3px color-mix(in srgb, var(--p) 15%, transparent); }
+    .ep-eye-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 2px; color: var(--t3); display: flex; align-items: center; }
+    .ep-eye-btn:hover { color: var(--t1); }
+    .ep-eye-btn svg { width: 14px; height: 14px; }
+    .ep-btn-primary { width: 100%; padding: 11px 16px; background: var(--p); color: white; font-size: 14px; font-weight: 600; font-family: inherit; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: background 0.15s, transform 0.15s, box-shadow 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .ep-btn-primary:hover { background: var(--ph); transform: translateY(-1px); box-shadow: 0 4px 12px color-mix(in srgb, var(--p) 30%, transparent); }
+    .ep-btn-primary svg { width: 14px; height: 14px; }
+    .ep-footer-note { display: flex; align-items: center; justify-content: center; gap: 5px; padding: 13px 28px 16px; border-top: 1px solid var(--border); }
+    .ep-footer-note svg { width: 12px; height: 12px; color: var(--t3); }
+    .ep-footer-note span { font-size: 11px; color: var(--t3); }
+
+    /* SSO Card with Scopes */
+    .sso-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-sm); width: 100%; max-width: 420px; overflow: hidden; }
+    .sso-card:hover { box-shadow: var(--shadow-md); }
+    .sc-card-header { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .sc-brand-row { display: flex; align-items: center; gap: 10px; }
+    .sc-brand-icon { width: 36px; height: 36px; background: color-mix(in srgb, var(--p) 12%, transparent); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .sc-brand-icon svg { width: 18px; height: 18px; color: var(--p); }
+    .sc-brand-text { display: flex; flex-direction: column; gap: 2px; }
+    .sc-brand-name { font-size: 13px; font-weight: 700; color: var(--t1); letter-spacing: -0.01em; }
+    .sc-brand-sub { font-size: 11px; color: var(--t3); font-weight: 500; }
+    .sc-status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.02em; flex-shrink: 0; }
+    .sc-status-badge.active { background: color-mix(in srgb, #10B981 12%, transparent); color: #059669; }
+    .sc-status-badge .sc-dot { width: 5px; height: 5px; border-radius: 50%; background: #10B981; }
+    .sc-card-body { padding: 20px 24px; }
+    .sc-app-title { font-size: 18px; font-weight: 700; color: var(--t1); letter-spacing: -0.02em; margin-bottom: 4px; }
+    .sc-app-desc { font-size: 13px; color: var(--t2); line-height: 1.5; margin-bottom: 20px; }
+    .sc-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .sc-meta-item { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+    .sc-meta-label { font-size: 10px; font-weight: 600; color: var(--t3); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+    .sc-meta-value { font-size: 13px; font-weight: 500; color: var(--t1); display: flex; align-items: center; gap: 5px; }
+    .sc-meta-value svg { width: 13px; height: 13px; color: var(--t3); flex-shrink: 0; }
+    .sc-divider { height: 1px; background: var(--border); margin: 0 0 20px; }
+    .sc-scope-label { font-size: 11px; font-weight: 600; color: var(--t3); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px; }
+    .sc-scope-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+    .sc-scope-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); cursor: default; transition: border-color 0.15s, background 0.15s; }
+    .sc-scope-item:hover { border-color: var(--bh); background: var(--bg2); }
+    .sc-scope-check { width: 16px; height: 16px; border-radius: 4px; background: color-mix(in srgb, var(--p) 12%, transparent); border: 1.5px solid color-mix(in srgb, var(--p) 40%, transparent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .sc-scope-check svg { width: 9px; height: 9px; color: var(--p); }
+    .sc-scope-text { display: flex; flex-direction: column; gap: 1px; flex: 1; }
+    .sc-scope-name { font-size: 12px; font-weight: 600; color: var(--t1); }
+    .sc-scope-detail { font-size: 11px; color: var(--t3); }
+    .sc-scope-badge { font-size: 10px; font-weight: 500; padding: 2px 6px; border-radius: 4px; background: color-mix(in srgb, var(--p) 10%, transparent); color: var(--p); }
+    .sc-scope-badge.read { background: color-mix(in srgb, #10B981 10%, transparent); color: #059669; }
+    .sc-card-footer { padding: 0 24px 20px; display: flex; flex-direction: column; gap: 8px; }
+    .sc-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px 16px; background: var(--p); color: white; font-size: 14px; font-weight: 500; font-family: inherit; border: none; border-radius: 6px; cursor: pointer; transition: background 0.15s, transform 0.15s, box-shadow 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .sc-btn-primary:hover { background: var(--ph); transform: translateY(-1px); box-shadow: 0 4px 12px color-mix(in srgb, var(--p) 30%, transparent); }
+    .sc-btn-primary svg { width: 14px; height: 14px; }
+    .sc-btn-ghost { display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 9px 16px; background: transparent; color: var(--t2); font-size: 13px; font-weight: 500; font-family: inherit; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s; }
+    .sc-btn-ghost:hover { background: var(--bg2); border-color: var(--bh); color: var(--t1); }
+
+    /* Single Provider Card */
+    .sp-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-sm); width: 100%; max-width: 380px; overflow: hidden; }
+    .sp-card:hover { box-shadow: var(--shadow-md); }
+    .sp-card-head { padding: 28px 28px 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); text-align: center; }
+    .sp-brand-icon { width: 44px; height: 44px; background: color-mix(in srgb, var(--p) 10%, transparent); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .sp-brand-icon svg { width: 20px; height: 20px; color: var(--p); }
+    .sp-head-text { display: flex; flex-direction: column; gap: 3px; }
+    .sp-head-title { font-size: 17px; font-weight: 700; color: var(--t1); letter-spacing: -0.02em; }
+    .sp-head-sub { font-size: 13px; color: var(--t2); }
+    .sp-card-body { padding: 24px 28px; }
+    .sp-app-row { display: flex; align-items: center; gap: 10px; padding: 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; }
+    .sp-app-avatar { width: 32px; height: 32px; border-radius: 6px; background: color-mix(in srgb, var(--p) 8%, transparent); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .sp-app-avatar svg { width: 15px; height: 15px; color: var(--p); }
+    .sp-app-info { flex: 1; }
+    .sp-app-name { font-size: 13px; font-weight: 600; color: var(--t1); }
+    .sp-app-domain { font-size: 11px; color: var(--t3); }
+    .sp-app-verified { display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; color: #059669; background: color-mix(in srgb, #10B981 10%, transparent); padding: 3px 8px; border-radius: 999px; flex-shrink: 0; }
+    .sp-app-verified svg { width: 10px; height: 10px; }
+    .sp-info-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+    .sp-info-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+    .sp-info-key { color: var(--t3); display: flex; align-items: center; gap: 5px; }
+    .sp-info-key svg { width: 12px; height: 12px; }
+    .sp-info-val { color: var(--t1); font-weight: 500; }
+    .sp-divider { height: 1px; background: var(--border); margin: 0 0 20px; }
+    .sp-btn-primary { width: 100%; padding: 11px 16px; background: var(--p); color: white; font-size: 14px; font-weight: 600; font-family: inherit; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.15s, transform 0.15s, box-shadow 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .sp-btn-primary:hover { background: var(--ph); transform: translateY(-1px); box-shadow: 0 4px 12px color-mix(in srgb, var(--p) 30%, transparent); }
+    .sp-btn-primary svg { width: 15px; height: 15px; }
+    .sp-footer-note { display: flex; align-items: center; justify-content: center; gap: 5px; padding: 14px 28px 18px; border-top: 1px solid var(--border); }
+    .sp-footer-note svg { width: 12px; height: 12px; color: var(--t3); }
+    .sp-footer-note span { font-size: 11px; color: var(--t3); }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="8" fill="currentColor"/>
+        <path d="M10 22V10L16 16L22 10V22" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Bigso <em>DS</em></span>
+    </div>
+
+    <div style="padding: 8px 0; flex: 1;">
+      <div class="sidebar-section">Fundamentos</div>
+      <a class="sidebar-link active" href="#colores" onclick="setActive(this)"><span class="dot"></span>Colores</a>
+      <a class="sidebar-link" href="#tipografia" onclick="setActive(this)"><span class="dot"></span>Tipografía</a>
+      <a class="sidebar-link" href="#espaciado" onclick="setActive(this)"><span class="dot"></span>Espaciado</a>
+      <a class="sidebar-link" href="#sombras" onclick="setActive(this)"><span class="dot"></span>Sombras</a>
+      <a class="sidebar-link" href="#bordes" onclick="setActive(this)"><span class="dot"></span>Bordes & Radios</a>
+
+      <div class="sidebar-section">Componentes</div>
+      <a class="sidebar-link" href="#botones" onclick="setActive(this)"><span class="dot"></span>Botones</a>
+      <a class="sidebar-link" href="#badges" onclick="setActive(this)"><span class="dot"></span>Badges</a>
+      <a class="sidebar-link" href="#inputs" onclick="setActive(this)"><span class="dot"></span>Formularios</a>
+      <a class="sidebar-link" href="#cards" onclick="setActive(this)"><span class="dot"></span>Cards</a>
+      <a class="sidebar-link" href="#alertas" onclick="setActive(this)"><span class="dot"></span>Alertas</a>
+
+      <div class="sidebar-section">Extras</div>
+      <a class="sidebar-link" href="#avatares" onclick="setActive(this)"><span class="dot"></span>Avatares</a>
+      <a class="sidebar-link" href="#progress" onclick="setActive(this)"><span class="dot"></span>Progress</a>
+      <a class="sidebar-link" href="#tooltips" onclick="setActive(this)"><span class="dot"></span>Tooltips</a>
+      <a class="sidebar-link" href="#motion" onclick="setActive(this)"><span class="dot"></span>Motion</a>
+      <a class="sidebar-link" href="#tokens" onclick="setActive(this)"><span class="dot"></span>CSS Tokens</a>
+
+      <div class="sidebar-section">Widgets</div>
+      <a class="sidebar-link" href="#ssowidgets" onclick="setActive(this)"><span class="dot"></span>SSO Widgets</a>
+    </div>
+
+    <div class="sidebar-bottom">
+      <span class="version-badge">v1.0</span>
+      <button class="icon-btn" id="theme-toggle" aria-label="Cambiar tema" onclick="toggleTheme()">
+        <svg class="sun-icon" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"/>
+        </svg>
+        <svg class="moon-icon" style="display:none" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/>
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- ══ MAIN ══ -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="icon-btn" style="display:none" id="menu-btn" onclick="openSidebar()" aria-label="Menú">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+          </svg>
+        </button>
+        <div class="topbar-breadcrumb">
+          Bigso &nbsp;/&nbsp; <span id="current-section">Colores</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <a href="https://www.bigso.co" target="_blank" class="icon-btn" aria-label="Abrir sitio">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- ════════════ COLORES ════════════ -->
+    <section class="section" id="colores">
+      <div class="section-header">
+        <div class="section-tag">01 — Fundamentos</div>
+        <h2 class="section-title">Sistema de Colores</h2>
+        <p class="section-desc">Paleta semántica con Deep Indigo como color primario. Optimizada para contraste WCAG 4.5:1 en ambos modos.</p>
+      </div>
+
+      <!-- Primarios -->
+      <div class="preview">
+        <div class="preview-label">Paleta Principal <button class="copy-btn" onclick="copyText('--color-primary: #4F46E5;')">⎘ copiar tokens</button></div>
+        <div class="swatch-grid">
+          <div class="swatch" onclick="copyText('#4F46E5')">
+            <div class="swatch-color" style="background:#4F46E5;"></div>
+            <div class="swatch-info">
+              <div class="swatch-name">Primary</div>
+              <div class="swatch-hex">#4F46E5</div>
+              <div class="swatch-role">indigo-600</div>
+            </div>
+          </div>
+          <div class="swatch" onclick="copyText('#4338CA')">
+            <div class="swatch-color" style="background:#4338CA;"></div>
+            <div class="swatch-info">
+              <div class="swatch-name">Primary Hover</div>
+              <div class="swatch-hex">#4338CA</div>
+              <div class="swatch-role">indigo-700</div>
+            </div>
+          </div>
+          <div class="swatch" onclick="copyText('#EEF2FF')">
+            <div class="swatch-color" style="background:#EEF2FF; border-bottom:1px solid #e0e7ff;"></div>
+            <div class="swatch-info">
+              <div class="swatch-name">Primary Light</div>
+              <div class="swatch-hex">#EEF2FF</div>
+              <div class="swatch-role">indigo-50</div>
+            </div>
+          </div>
+          <div class="swatch" onclick="copyText('#10B981')">
+            <div class="swatch-color" style="background:#10B981;"></div>
+            <div class="swatch-info">
+              <div class="swatch-name">Accent</div>
+              <div class="swatch-hex">#10B981</div>
+              <div class="swatch-role">emerald-500</div>
+            </div>
+          </div>
+          <div class="swatch" onclick="copyText('#F59E0B')">
+            <div class="swatch-color" style="background:#F59E0B;"></div>
+            <div class="swatch-info">
+              <div class="swatch-name">Warning</div>
+              <div class="swatch-hex">#F59E0B</div>
+              <div class="swatch-role">amber-500</div>
+            </div>
+          </div>
+          <div class="swatch" onclick="copyText('#F43F5E')">
+            <div class="swatch-color" style="background:#F43F5E;"></div>
+            <div class="swatch-info">
+              <div class="swatch-name">Error</div>
+              <div class="swatch-hex">#F43F5E</div>
+              <div class="swatch-role">rose-500</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Neutros -->
+      <div class="preview">
+        <div class="preview-label">Escala Neutral (Slate)</div>
+        <div style="padding:24px 32px;">
+          <div style="display:grid; grid-template-columns:repeat(10,1fr); gap:6px; margin-bottom:8px;">
+            <div style="height:40px;background:#F8FAFC;border-radius:6px;border:1px solid #e2e8f0;"></div>
+            <div style="height:40px;background:#F1F5F9;border-radius:6px;"></div>
+            <div style="height:40px;background:#E2E8F0;border-radius:6px;"></div>
+            <div style="height:40px;background:#CBD5E1;border-radius:6px;"></div>
+            <div style="height:40px;background:#94A3B8;border-radius:6px;"></div>
+            <div style="height:40px;background:#64748B;border-radius:6px;"></div>
+            <div style="height:40px;background:#475569;border-radius:6px;"></div>
+            <div style="height:40px;background:#334155;border-radius:6px;"></div>
+            <div style="height:40px;background:#1E293B;border-radius:6px;"></div>
+            <div style="height:40px;background:#0F172A;border-radius:6px;"></div>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(10,1fr); gap:6px; text-align:center;">
+            <span style="font-size:10px;color:var(--t3);">50</span>
+            <span style="font-size:10px;color:var(--t3);">100</span>
+            <span style="font-size:10px;color:var(--t3);">200</span>
+            <span style="font-size:10px;color:var(--t3);">300</span>
+            <span style="font-size:10px;color:var(--t3);">400</span>
+            <span style="font-size:10px;color:var(--t3);">500</span>
+            <span style="font-size:10px;color:var(--t3);">600</span>
+            <span style="font-size:10px;color:var(--t3);">700</span>
+            <span style="font-size:10px;color:var(--t3);">800</span>
+            <span style="font-size:10px;color:var(--t3);">900</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dark mode -->
+      <div class="preview">
+        <div class="preview-label">Dark Mode — Ajustes</div>
+        <div style="padding:24px 32px;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;">
+          <div class="swatch">
+            <div class="swatch-color" style="background:#818CF8;"></div>
+            <div class="swatch-info"><div class="swatch-name">Primary DM</div><div class="swatch-hex">#818CF8</div></div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-color" style="background:#020617;"></div>
+            <div class="swatch-info"><div class="swatch-name">BG Primary</div><div class="swatch-hex">#020617</div></div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-color" style="background:#0F172A;"></div>
+            <div class="swatch-info"><div class="swatch-name">BG Secondary</div><div class="swatch-hex">#0F172A</div></div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-color" style="background:#1E293B;"></div>
+            <div class="swatch-info"><div class="swatch-name">BG Tertiary</div><div class="swatch-hex">#1E293B</div></div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-color" style="background:#334155;"></div>
+            <div class="swatch-info"><div class="swatch-name">Border DM</div><div class="swatch-hex">#334155</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ TIPOGRAFÍA ════════════ -->
+    <section class="section" id="tipografia">
+      <div class="section-header">
+        <div class="section-tag">02 — Fundamentos</div>
+        <h2 class="section-title">Tipografía</h2>
+        <p class="section-desc">Inter como fuente principal. Escala de 9 niveles, base 16px, letter-spacing negativo en headings para densidad visual.</p>
+      </div>
+
+      <div class="preview">
+        <div class="preview-label">Escala Tipográfica</div>
+        <div style="padding:24px 32px;">
+          <div class="type-row">
+            <div class="type-meta"><div class="type-meta-name">Display</div><div class="type-meta-spec">48px · 700 · -0.02em</div></div>
+            <div class="type-sample" style="font-size:48px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;">Bigso</div>
+          </div>
+          <div class="type-row">
+            <div class="type-meta"><div class="type-meta-name">H1</div><div class="type-meta-spec">36px · 700 · -0.02em</div></div>
+            <div class="type-sample" style="font-size:36px;font-weight:700;letter-spacing:-0.02em;line-height:1.2;">Ecosistema empresarial</div>
+          </div>
+          <div class="type-row">
+            <div class="type-meta"><div class="type-meta-name">H2</div><div class="type-meta-spec">30px · 600 · -0.01em</div></div>
+            <div class="type-sample" style="font-size:30px;font-weight:600;letter-spacing:-0.01em;line-height:1.25;">Diseñado para escalar</div>
+          </div>
+          <div class="type-row">
+            <div class="type-meta"><div class="type-meta-name">H3</div><div class="type-meta-spec">24px · 600 · -0.01em</div></div>
+            <div class="type-sample" style="font-size:24px;font-weight:600;letter-spacing:-0.01em;line-height:1.3;">Gestión Operativa</div>
+          </div>
+          <div class="type-row">
+            <div class="type-meta"><div class="type-meta-name">H4</div><div class="type-meta-spec">20px · 600</div></div>
+            <div class="type-sample" style="font-size:20px;font-weight:600;line-height:1.4;">Analítica en tiempo real</div>
+          </div>
+          <div class="type-row">
+            <div class="type-meta"><div class="type-meta-name">Body Large</div><div class="type-meta-spec">18px · 400</div></div>
+            <div class="type-sample" style="font-size:18px;font-weight:400;line-height:1.6;color:var(--t2);">Plataforma integral de análisis de datos y business intelligence para tu empresa.</div>
+          </div>
+          <div class="type-row">
+            <div class="type-meta"><div class="type-meta-name">Body</div><div class="type-meta-spec">16px · 400</div></div>
+            <div class="type-sample" style="font-size:16px;font-weight:400;line-height:1.6;color:var(--t2);">Sistema completo de gestión de procesos empresariales con integración nativa.</div>
+          </div>
+          <div class="type-row">
+            <div class="type-meta"><div class="type-meta-name">Body Small</div><div class="type-meta-spec">14px · 400</div></div>
+            <div class="type-sample" style="font-size:14px;font-weight:400;line-height:1.5;color:var(--t2);">Texto secundario para metadatos, descripciones y contenido de apoyo.</div>
+          </div>
+          <div class="type-row">
+            <div class="type-meta"><div class="type-meta-name">Caption</div><div class="type-meta-spec">12px · 500 · 0.02em</div></div>
+            <div class="type-sample" style="font-size:12px;font-weight:500;letter-spacing:0.02em;text-transform:uppercase;color:var(--t3);">Label · Badge · Timestamp</div>
+          </div>
+          <div class="type-row">
+            <div class="type-meta"><div class="type-meta-name">Mono</div><div class="type-meta-spec">JetBrains Mono · 13px</div></div>
+            <div class="type-sample" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--p);">const theme = 'bigso';</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ ESPACIADO ════════════ -->
+    <section class="section" id="espaciado">
+      <div class="section-header">
+        <div class="section-tag">03 — Fundamentos</div>
+        <h2 class="section-title">Espaciado</h2>
+        <p class="section-desc">Escala base 4px. Cada token es un múltiplo: consistencia garantizada en toda la UI.</p>
+      </div>
+      <div class="preview">
+        <div class="preview-label">Escala de Espaciado</div>
+        <div style="padding:32px;display:flex;flex-direction:column;gap:10px;">
+          <div style="display:grid;grid-template-columns:80px 1fr 60px;align-items:center;gap:12px;">
+            <span style="font-size:12px;font-weight:600;color:var(--t2);font-family:monospace;">space-1</span>
+            <div class="space-bar" style="width:4px;min-width:4px;padding:0;"></div>
+            <span style="font-size:11px;color:var(--t3);">4px</span>
+          </div>
+          <div style="display:grid;grid-template-columns:80px 1fr 60px;align-items:center;gap:12px;">
+            <span style="font-size:12px;font-weight:600;color:var(--t2);font-family:monospace;">space-2</span>
+            <div class="space-bar" style="width:8px;min-width:8px;padding:0;"></div>
+            <span style="font-size:11px;color:var(--t3);">8px</span>
+          </div>
+          <div style="display:grid;grid-template-columns:80px 1fr 60px;align-items:center;gap:12px;">
+            <span style="font-size:12px;font-weight:600;color:var(--t2);font-family:monospace;">space-4</span>
+            <div class="space-bar" style="width:16px;min-width:16px;padding:0;"></div>
+            <span style="font-size:11px;color:var(--t3);">16px</span>
+          </div>
+          <div style="display:grid;grid-template-columns:80px 1fr 60px;align-items:center;gap:12px;">
+            <span style="font-size:12px;font-weight:600;color:var(--t2);font-family:monospace;">space-6</span>
+            <div class="space-bar" style="width:24px;min-width:24px;padding:0;"></div>
+            <span style="font-size:11px;color:var(--t3);">24px</span>
+          </div>
+          <div style="display:grid;grid-template-columns:80px 1fr 60px;align-items:center;gap:12px;">
+            <span style="font-size:12px;font-weight:600;color:var(--t2);font-family:monospace;">space-8</span>
+            <div class="space-bar" style="width:32px;min-width:32px;padding:0;"></div>
+            <span style="font-size:11px;color:var(--t3);">32px</span>
+          </div>
+          <div style="display:grid;grid-template-columns:80px 1fr 60px;align-items:center;gap:12px;">
+            <span style="font-size:12px;font-weight:600;color:var(--t2);font-family:monospace;">space-12</span>
+            <div class="space-bar" style="width:48px;min-width:48px;padding:0;"></div>
+            <span style="font-size:11px;color:var(--t3);">48px</span>
+          </div>
+          <div style="display:grid;grid-template-columns:80px 1fr 60px;align-items:center;gap:12px;">
+            <span style="font-size:12px;font-weight:600;color:var(--t2);font-family:monospace;">space-16</span>
+            <div class="space-bar" style="width:64px;min-width:64px;padding:0;"></div>
+            <span style="font-size:11px;color:var(--t3);">64px</span>
+          </div>
+          <div style="display:grid;grid-template-columns:80px 1fr 60px;align-items:center;gap:12px;">
+            <span style="font-size:12px;font-weight:600;color:var(--t2);font-family:monospace;">space-20</span>
+            <div class="space-bar" style="width:80px;min-width:80px;padding:0;"></div>
+            <span style="font-size:11px;color:var(--t3);">80px</span>
+          </div>
+          <div style="display:grid;grid-template-columns:80px 1fr 60px;align-items:center;gap:12px;">
+            <span style="font-size:12px;font-weight:600;color:var(--t2);font-family:monospace;">space-24</span>
+            <div class="space-bar" style="width:96px;min-width:96px;padding:0;"></div>
+            <span style="font-size:11px;color:var(--t3);">96px</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ SOMBRAS ════════════ -->
+    <section class="section" id="sombras">
+      <div class="section-header">
+        <div class="section-tag">04 — Fundamentos</div>
+        <h2 class="section-title">Sombras & Elevación</h2>
+        <p class="section-desc">5 niveles de elevación. Cada sombra comunica profundidad y jerarquía visual.</p>
+      </div>
+      <div class="preview">
+        <div class="preview-label">Niveles de Sombra</div>
+        <div style="padding:40px 32px;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:28px;background:var(--bg2);">
+          <div class="shadow-demo" style="box-shadow:0 1px 2px 0 rgba(0,0,0,0.05);">
+            <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:4px;">xs</div>
+            <div style="font-size:11px;color:var(--t3);">Casi plano</div>
+          </div>
+          <div class="shadow-demo" style="box-shadow:0 1px 3px 0 rgba(0,0,0,0.1),0 1px 2px -1px rgba(0,0,0,0.1);">
+            <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:4px;">sm</div>
+            <div style="font-size:11px;color:var(--t3);">Cards default</div>
+          </div>
+          <div class="shadow-demo" style="box-shadow:0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.1);">
+            <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:4px;">md</div>
+            <div style="font-size:11px;color:var(--t3);">Hover, dropdowns</div>
+          </div>
+          <div class="shadow-demo" style="box-shadow:0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -4px rgba(0,0,0,0.1);">
+            <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:4px;">lg</div>
+            <div style="font-size:11px;color:var(--t3);">Modals</div>
+          </div>
+          <div class="shadow-demo" style="box-shadow:0 20px 25px -5px rgba(0,0,0,0.1),0 8px 10px -6px rgba(0,0,0,0.1);">
+            <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:4px;">xl</div>
+            <div style="font-size:11px;color:var(--t3);">Flotantes</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ BORDES ════════════ -->
+    <section class="section" id="bordes">
+      <div class="section-header">
+        <div class="section-tag">05 — Fundamentos</div>
+        <h2 class="section-title">Bordes & Radios</h2>
+        <p class="section-desc">7 niveles de border-radius. De subtle a pill, cada radio tiene un propósito.</p>
+      </div>
+      <div class="preview">
+        <div class="preview-label">Border Radius</div>
+        <div style="padding:32px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;">
+          <div style="text-align:center;">
+            <div style="width:64px;height:64px;background:color-mix(in srgb,var(--p) 15%,transparent);border:2px solid var(--p);border-radius:0;"></div>
+            <div style="font-size:11px;color:var(--t3);margin-top:6px;">0px<br>none</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:64px;height:64px;background:color-mix(in srgb,var(--p) 15%,transparent);border:2px solid var(--p);border-radius:4px;"></div>
+            <div style="font-size:11px;color:var(--t3);margin-top:6px;">4px<br>sm</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:64px;height:64px;background:color-mix(in srgb,var(--p) 15%,transparent);border:2px solid var(--p);border-radius:6px;"></div>
+            <div style="font-size:11px;color:var(--t3);margin-top:6px;">6px<br>default</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:64px;height:64px;background:color-mix(in srgb,var(--p) 15%,transparent);border:2px solid var(--p);border-radius:8px;"></div>
+            <div style="font-size:11px;color:var(--t3);margin-top:6px;">8px<br>md</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:64px;height:64px;background:color-mix(in srgb,var(--p) 15%,transparent);border:2px solid var(--p);border-radius:12px;"></div>
+            <div style="font-size:11px;color:var(--t3);margin-top:6px;">12px<br>lg</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:64px;height:64px;background:color-mix(in srgb,var(--p) 15%,transparent);border:2px solid var(--p);border-radius:16px;"></div>
+            <div style="font-size:11px;color:var(--t3);margin-top:6px;">16px<br>xl</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:64px;height:64px;background:color-mix(in srgb,var(--p) 15%,transparent);border:2px solid var(--p);border-radius:9999px;"></div>
+            <div style="font-size:11px;color:var(--t3);margin-top:6px;">9999px<br>full</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ BOTONES ════════════ -->
+    <section class="section" id="botones">
+      <div class="section-header">
+        <div class="section-tag">06 — Componentes</div>
+        <h2 class="section-title">Botones</h2>
+        <p class="section-desc">4 variantes semánticas × 4 tamaños. Touch target mínimo 40px. Transición 150ms.</p>
+      </div>
+
+      <div class="preview" style="margin-bottom:12px;">
+        <div class="preview-label">Variantes</div>
+        <div class="preview-body">
+          <button class="btn btn-primary">Primary</button>
+          <button class="btn btn-secondary">Secondary</button>
+          <button class="btn btn-ghost">Ghost</button>
+          <button class="btn btn-destructive">Destructive</button>
+          <button class="btn btn-primary" disabled>Disabled</button>
+        </div>
+      </div>
+
+      <div class="preview" style="margin-bottom:12px;">
+        <div class="preview-label">Tamaños</div>
+        <div class="preview-body" style="align-items:center;">
+          <button class="btn btn-primary btn-sm">Small</button>
+          <button class="btn btn-primary">Default</button>
+          <button class="btn btn-primary btn-lg">Large</button>
+          <button class="btn btn-primary btn-xl">XL</button>
+        </div>
+      </div>
+
+      <div class="preview" style="margin-bottom:12px;">
+        <div class="preview-label">Con Iconos</div>
+        <div class="preview-body">
+          <button class="btn btn-primary">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+            Nuevo
+          </button>
+          <button class="btn btn-secondary">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+            Exportar
+          </button>
+          <button class="btn btn-ghost">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Configuración
+          </button>
+          <!-- Icon only -->
+          <button class="btn btn-primary" style="width:40px;height:40px;padding:0;border-radius:50%;" aria-label="Agregar">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="preview">
+        <div class="preview-label">Estado Loading</div>
+        <div class="preview-body">
+          <button class="btn btn-primary btn-loading" style="min-width:120px;color:transparent;">Guardando...</button>
+          <button class="btn btn-secondary btn-loading" style="min-width:120px;color:transparent;">
+            <span style="color:transparent;">Cargando</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ BADGES ════════════ -->
+    <section class="section" id="badges">
+      <div class="section-header">
+        <div class="section-tag">07 — Componentes</div>
+        <h2 class="section-title">Badges</h2>
+        <p class="section-desc">Semánticos por naturaleza. El color comunica el estado, nunca el texto solo.</p>
+      </div>
+      <div class="preview">
+        <div class="preview-label">Variantes</div>
+        <div class="preview-body">
+          <span class="badge badge-primary"><span class="badge-dot"></span>Activo</span>
+          <span class="badge badge-success"><span class="badge-dot"></span>Operativo</span>
+          <span class="badge badge-warning"><span class="badge-dot"></span>Pendiente</span>
+          <span class="badge badge-error"><span class="badge-dot"></span>Error</span>
+          <span class="badge badge-neutral">Draft</span>
+          <span class="badge badge-primary" style="border-radius:4px;">Beta</span>
+          <span class="badge badge-success" style="text-transform:uppercase;letter-spacing:0.06em;font-size:10px;">Pro</span>
+          <span class="badge badge-neutral">v2.4.1</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ INPUTS ════════════ -->
+    <section class="section" id="inputs">
+      <div class="section-header">
+        <div class="section-tag">08 — Componentes</div>
+        <h2 class="section-title">Formularios</h2>
+        <p class="section-desc">Estados: default, focus, hover, disabled, error. Focus ring 3px con opacidad 15%.</p>
+      </div>
+
+      <div class="preview" style="margin-bottom:12px;">
+        <div class="preview-label">Inputs de Texto</div>
+        <div class="preview-body stack" style="max-width:480px;margin:0 auto;">
+          <div class="field">
+            <label class="label">Correo electrónico</label>
+            <div class="input-icon-wrap">
+              <svg class="input-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+              <input class="input" type="email" placeholder="correo@empresa.com">
+            </div>
+            <span class="hint">Usa tu correo corporativo</span>
+          </div>
+
+          <div class="field">
+            <label class="label">Contraseña <span style="color:#F43F5E;margin-left:2px;">*</span></label>
+            <input class="input error" type="password" value="123">
+            <span class="error-msg">
+              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
+              Mínimo 8 caracteres requeridos
+            </span>
+          </div>
+
+          <div class="field">
+            <label class="label" style="color:var(--t3);">Campo deshabilitado</label>
+            <input class="input" type="text" value="No editable" disabled>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview" style="margin-bottom:12px;">
+        <div class="preview-label">Select & Textarea</div>
+        <div class="preview-body stack" style="max-width:480px;margin:0 auto;">
+          <div class="field">
+            <label class="label">Plan de suscripción</label>
+            <select class="input">
+              <option>Selecciona un plan</option>
+              <option>Básico — $99/mes</option>
+              <option selected>Profesional — $199/mes</option>
+              <option>Enterprise — Personalizado</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="label">Mensaje</label>
+            <textarea class="input" placeholder="Describe tu caso de uso..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview">
+        <div class="preview-label">Checkbox, Radio & Toggle</div>
+        <div class="preview-body" style="flex-direction:column;gap:20px;max-width:360px;">
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <label class="check-wrap"><input type="checkbox" checked><span>Recibir notificaciones por email</span></label>
+            <label class="check-wrap"><input type="checkbox"><span>Aceptar términos y condiciones</span></label>
+            <label class="check-wrap"><input type="radio" name="plan" checked><span>Plan mensual</span></label>
+            <label class="check-wrap"><input type="radio" name="plan"><span>Plan anual (20% descuento)</span></label>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div class="toggle-row">
+              <label class="toggle"><input type="checkbox" checked><span class="track"></span><span class="knob"></span></label>
+              <span style="font-size:14px;color:var(--t1);">Notificaciones activas</span>
+            </div>
+            <div class="toggle-row">
+              <label class="toggle"><input type="checkbox"><span class="track"></span><span class="knob"></span></label>
+              <span style="font-size:14px;color:var(--t2);">Modo mantenimiento</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ CARDS ════════════ -->
+    <section class="section" id="cards">
+      <div class="section-header">
+        <div class="section-tag">09 — Componentes</div>
+        <h2 class="section-title">Cards</h2>
+        <p class="section-desc">Elevación progresiva en hover. shadow-sm por defecto → shadow-md en :hover con translateY(-2px).</p>
+      </div>
+
+      <div class="preview">
+        <div class="preview-label">Feature Cards</div>
+        <div class="preview-body grid3">
+          <div class="card">
+            <div class="card-icon" style="background:color-mix(in srgb,#4F46E5 12%,transparent);">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#4F46E5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+            </div>
+            <div class="card-title">Analítica Empresarial</div>
+            <div class="card-desc">Plataforma de análisis de datos con dashboards en tiempo real e inteligencia de negocio.</div>
+            <a href="#" class="card-link">Ver más <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg></a>
+          </div>
+          <div class="card">
+            <div class="card-icon" style="background:color-mix(in srgb,#10B981 12%,transparent);">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#10B981"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/></svg>
+            </div>
+            <div class="card-title">Gestión Operativa</div>
+            <div class="card-desc">Control completo de pedidos, inventario y logística con automatización de flujos.</div>
+            <a href="#" class="card-link">Ver más <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg></a>
+          </div>
+          <div class="card">
+            <div class="card-icon" style="background:color-mix(in srgb,#7C3AED 12%,transparent);">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#7C3AED"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z"/></svg>
+            </div>
+            <div class="card-title">Suite Cloud</div>
+            <div class="card-desc">Infraestructura gestionada con escalado automático, CDN global y backups diarios.</div>
+            <a href="#" class="card-link">Ver más <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ ALERTAS ════════════ -->
+    <section class="section" id="alertas">
+      <div class="section-header">
+        <div class="section-tag">10 — Componentes</div>
+        <h2 class="section-title">Alertas</h2>
+        <p class="section-desc">4 estados semánticos. Siempre con icono + título + descripción opcional.</p>
+      </div>
+      <div class="preview">
+        <div class="preview-label">Estados</div>
+        <div class="preview-body stack">
+          <div class="alert alert-success">
+            <svg class="alert-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <div><div class="alert-title">Pago procesado exitosamente</div><div class="alert-desc">La transacción #8472 fue confirmada. El recibo fue enviado a tu correo.</div></div>
+          </div>
+          <div class="alert alert-warning">
+            <svg class="alert-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z"/></svg>
+            <div><div class="alert-title">Tu plan vence en 5 días</div><div class="alert-desc">Renueva antes del 10 de abril para evitar interrupciones en el servicio.</div></div>
+          </div>
+          <div class="alert alert-error">
+            <svg class="alert-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
+            <div><div class="alert-title">Error al procesar el pago</div><div class="alert-desc">Verifica los datos de tu tarjeta e intenta nuevamente. Código: ERR_4023.</div></div>
+          </div>
+          <div class="alert alert-info">
+            <svg class="alert-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
+            <div><div class="alert-title">Nuevas funciones en Ordamy 2.4</div><div class="alert-desc">Descubre la integración nativa con facturación electrónica y reportes automáticos.</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ AVATARES ════════════ -->
+    <section class="section" id="avatares">
+      <div class="section-header">
+        <div class="section-tag">11 — Extras</div>
+        <h2 class="section-title">Avatares</h2>
+        <p class="section-desc">Iniciales como fallback. Grupos con -space-x-2 y borde blanco/dark para separación.</p>
+      </div>
+      <div class="preview">
+        <div class="preview-label">Tamaños & Grupos</div>
+        <div class="preview-body" style="align-items:center;gap:24px;">
+          <div class="avatar" style="width:32px;height:32px;font-size:12px;background:color-mix(in srgb,#4F46E5 15%,transparent);color:#4F46E5;">MR</div>
+          <div class="avatar" style="width:40px;height:40px;font-size:14px;background:color-mix(in srgb,#10B981 15%,transparent);color:#10B981;">AC</div>
+          <div class="avatar" style="width:48px;height:48px;font-size:16px;background:color-mix(in srgb,#F59E0B 15%,transparent);color:#B45309;">PL</div>
+          <div class="avatar" style="width:56px;height:56px;font-size:18px;background:color-mix(in srgb,#F43F5E 15%,transparent);color:#be123c;">JC</div>
+          <!-- Avatar group -->
+          <div style="display:flex;">
+            <div class="avatar" style="width:36px;height:36px;font-size:13px;background:#4F46E5;color:white;border:2px solid var(--bg);margin-right:-10px;z-index:4;">MR</div>
+            <div class="avatar" style="width:36px;height:36px;font-size:13px;background:#10B981;color:white;border:2px solid var(--bg);margin-right:-10px;z-index:3;">AC</div>
+            <div class="avatar" style="width:36px;height:36px;font-size:13px;background:#F59E0B;color:white;border:2px solid var(--bg);margin-right:-10px;z-index:2;">PL</div>
+            <div class="avatar" style="width:36px;height:36px;font-size:12px;background:var(--bg2);color:var(--t2);border:2px solid var(--bg);z-index:1;">+5</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ PROGRESS ════════════ -->
+    <section class="section" id="progress">
+      <div class="section-header">
+        <div class="section-tag">12 — Extras</div>
+        <h2 class="section-title">Progress</h2>
+        <p class="section-desc">Barras de progreso con transición 1s ease. Altura 6px estándar, 8px para contextos prominentes.</p>
+      </div>
+      <div class="preview">
+        <div class="preview-label">Variantes</div>
+        <div class="preview-body stack" style="max-width:480px;margin:0 auto;">
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;color:var(--t2);">
+              <span>Almacenamiento</span><span style="font-weight:600;color:var(--t1);">73%</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width:73%;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;color:var(--t2);">
+              <span>Usuarios activos</span><span style="font-weight:600;color:#10B981;">89%</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width:89%;background:#10B981;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;color:var(--t2);">
+              <span>Cuota de API</span><span style="font-weight:600;color:#F59E0B;">94%</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width:94%;background:#F59E0B;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;color:var(--t2);">
+              <span>Disco crítico</span><span style="font-weight:600;color:#F43F5E;">98%</span>
+            </div>
+            <div class="progress-track" style="height:8px;"><div class="progress-fill" style="width:98%;background:#F43F5E;height:8px;"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ TOOLTIPS ════════════ -->
+    <section class="section" id="tooltips">
+      <div class="section-header">
+        <div class="section-tag">13 — Extras</div>
+        <h2 class="section-title">Tooltips</h2>
+        <p class="section-desc">Aparecen en hover con opacity transition 150ms. Fondo slate-900 para máximo contraste.</p>
+      </div>
+      <div class="preview">
+        <div class="preview-label">Hover para ver</div>
+        <div class="preview-body center" style="gap:32px;padding:64px 32px;">
+          <div class="tooltip-wrap">
+            <button class="btn btn-primary">Botón con tooltip</button>
+            <div class="tooltip">Acción principal del sistema</div>
+          </div>
+          <div class="tooltip-wrap">
+            <button class="btn btn-secondary">Información</button>
+            <div class="tooltip">Solo lectura · No genera cambios</div>
+          </div>
+          <div class="tooltip-wrap">
+            <div class="avatar" style="width:40px;height:40px;font-size:14px;background:color-mix(in srgb,#4F46E5 15%,transparent);color:#4F46E5;cursor:default;">MR</div>
+            <div class="tooltip">María Rodríguez · Admin</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ MOTION ════════════ -->
+    <section class="section" id="motion">
+      <div class="section-header">
+        <div class="section-tag">14 — Extras</div>
+        <h2 class="section-title">Motion</h2>
+        <p class="section-desc">3 animaciones core. Haz clic en cada una para reproducirlas. Duración: 300–600ms.</p>
+      </div>
+      <div class="preview">
+        <div class="preview-label">Click para reproducir</div>
+        <div class="preview-body" style="gap:16px;flex-wrap:wrap;">
+          <div class="motion-box" style="width:180px;" onclick="replay(this,'fadeSlideUp 0.5s ease forwards')">
+            <div style="font-size:24px;margin-bottom:8px;">↑</div>
+            <div>Fade Slide Up</div>
+            <div style="font-size:11px;opacity:0.6;margin-top:4px;">500ms · ease</div>
+          </div>
+          <div class="motion-box" style="width:180px;" onclick="replay(this,'scaleIn 0.35s ease forwards')">
+            <div style="font-size:24px;margin-bottom:8px;">◎</div>
+            <div>Scale In</div>
+            <div style="font-size:11px;opacity:0.6;margin-top:4px;">350ms · ease</div>
+          </div>
+          <div class="motion-box" style="width:180px;" onclick="replay(this,'pulse 0.4s ease')">
+            <div style="font-size:24px;margin-bottom:8px;">♡</div>
+            <div>Pulse</div>
+            <div style="font-size:11px;opacity:0.6;margin-top:4px;">400ms · ease-in-out</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ TOKENS ════════════ -->
+    <section class="section" id="tokens">
+      <div class="section-header">
+        <div class="section-tag">15 — Extras</div>
+        <h2 class="section-title">CSS Tokens</h2>
+        <p class="section-desc">Variables CSS custom para implementaciones que no usan Tailwind. Auto-adaptables a dark mode.</p>
+      </div>
+      <div class="preview">
+        <div class="preview-label">:root variables <button class="copy-btn" id="token-copy-btn" onclick="copyTokens()">⎘ copiar todo</button></div>
+        <div class="code-block" id="tokens-code">
+<span class="kw">:root</span> {
+  <span class="cm">/* Colors */</span>
+  <span class="val">--color-primary</span>: <span class="str">#4F46E5</span>;
+  <span class="val">--color-primary-hover</span>: <span class="str">#4338CA</span>;
+  <span class="val">--color-primary-light</span>: <span class="str">#EEF2FF</span>;
+  <span class="val">--color-accent</span>: <span class="str">#10B981</span>;
+  <span class="val">--color-warning</span>: <span class="str">#F59E0B</span>;
+  <span class="val">--color-error</span>: <span class="str">#F43F5E</span>;
+  <span class="val">--color-bg-primary</span>: <span class="str">#FFFFFF</span>;
+  <span class="val">--color-bg-secondary</span>: <span class="str">#F8FAFC</span>;
+  <span class="val">--color-text-primary</span>: <span class="str">#0F172A</span>;
+  <span class="val">--color-text-secondary</span>: <span class="str">#475569</span>;
+  <span class="val">--color-text-tertiary</span>: <span class="str">#94A3B8</span>;
+  <span class="val">--color-border</span>: <span class="str">#E2E8F0</span>;
+
+  <span class="cm">/* Typography */</span>
+  <span class="val">--font-family</span>: <span class="str">'Inter', system-ui, sans-serif</span>;
+  <span class="val">--font-size-xs</span>: <span class="str">0.75rem</span>;
+  <span class="val">--font-size-sm</span>: <span class="str">0.875rem</span>;
+  <span class="val">--font-size-base</span>: <span class="str">1rem</span>;
+  <span class="val">--font-size-lg</span>: <span class="str">1.125rem</span>;
+  <span class="val">--font-size-xl</span>: <span class="str">1.25rem</span>;
+  <span class="val">--font-size-2xl</span>: <span class="str">1.5rem</span>;
+  <span class="val">--font-size-4xl</span>: <span class="str">2.25rem</span>;
+
+  <span class="cm">/* Spacing */</span>
+  <span class="val">--space-1</span>: <span class="str">0.25rem</span>;
+  <span class="val">--space-2</span>: <span class="str">0.5rem</span>;
+  <span class="val">--space-4</span>: <span class="str">1rem</span>;
+  <span class="val">--space-6</span>: <span class="str">1.5rem</span>;
+  <span class="val">--space-8</span>: <span class="str">2rem</span>;
+  <span class="val">--space-16</span>: <span class="str">4rem</span>;
+
+  <span class="cm">/* Radius */</span>
+  <span class="val">--radius-sm</span>: <span class="str">4px</span>;
+  <span class="val">--radius-md</span>: <span class="str">6px</span>;
+  <span class="val">--radius-lg</span>: <span class="str">8px</span>;
+  <span class="val">--radius-xl</span>: <span class="str">12px</span>;
+  <span class="val">--radius-full</span>: <span class="str">9999px</span>;
+
+  <span class="cm">/* Shadows */</span>
+  <span class="val">--shadow-sm</span>: <span class="str">0 1px 3px 0 rgb(0 0 0 / 0.1)</span>;
+  <span class="val">--shadow-md</span>: <span class="str">0 4px 6px -1px rgb(0 0 0 / 0.1)</span>;
+  <span class="val">--shadow-lg</span>: <span class="str">0 10px 15px -3px rgb(0 0 0 / 0.1)</span>;
+
+  <span class="cm">/* Transitions */</span>
+  <span class="val">--transition-fast</span>: <span class="str">150ms ease</span>;
+  <span class="val">--transition-normal</span>: <span class="str">200ms ease</span>;
+  <span class="val">--transition-slow</span>: <span class="str">300ms ease</span>;
+}
+
+<span class="kw">@media</span> (prefers-color-scheme: dark) {
+  <span class="kw">:root</span> {
+    <span class="val">--color-primary</span>: <span class="str">#818CF8</span>;
+    <span class="val">--color-bg-primary</span>: <span class="str">#020617</span>;
+    <span class="val">--color-bg-secondary</span>: <span class="str">#0F172A</span>;
+    <span class="val">--color-text-primary</span>: <span class="str">#F8FAFC</span>;
+    <span class="val">--color-text-secondary</span>: <span class="str">#94A3B8</span>;
+    <span class="val">--color-border</span>: <span class="str">#334155</span>;
+  }
+}
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ SSO WIDGETS ════════════ -->
+    <section class="section" id="ssowidgets">
+      <div class="section-header">
+        <div class="section-tag">16 — Widgets</div>
+        <h2 class="section-title">SSO Widgets</h2>
+        <p class="section-desc">4 variantes de cards de autenticación SSO para el ecosistema Bigso. Multi-provider, email/password, metadata OAuth y single provider.</p>
+      </div>
+
+      <!-- Variant 1: Multi-Provider -->
+      <div class="preview" style="margin-bottom:16px;">
+        <div class="preview-label">Variante 1: Quickstart Multi-Provider <span class="badge badge-primary" style="margin-left:8px;">Full</span></div>
+        <div class="preview-body center">
+          <div class="sso-widget">
+            <div class="sso-header">
+              <div class="sso-icon">
+                <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
+                </svg>
+              </div>
+              <h3 class="sso-title">Iniciar Sesión</h3>
+              <p class="sso-subtitle">Accede con tu proveedor preferido</p>
+            </div>
+            <div class="sso-providers">
+              <button class="sso-btn sso-btn-google">
+                <svg class="sso-btn-icon icon-google" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                <span class="sso-btn-text">Google</span>
+              </button>
+              <button class="sso-btn sso-btn-microsoft">
+                <svg class="sso-btn-icon" viewBox="0 0 24 24">
+                  <path fill="#F25022" d="M1 1h10v10H1z"/>
+                  <path fill="#00A4EF" d="M1 13h10v10H1z"/>
+                  <path fill="#7FBA00" d="M13 1h10v10H13z"/>
+                  <path fill="#FFB900" d="M13 13h10v10H13z"/>
+                </svg>
+                <span class="sso-btn-text">Microsoft</span>
+              </button>
+              <button class="sso-btn sso-btn-github">
+                <svg class="sso-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+                <span class="sso-btn-text">GitHub</span>
+              </button>
+            </div>
+            <div class="sso-divider"><span>o usa tu email</span></div>
+            <form class="sso-email-form">
+              <input type="email" class="sso-input" placeholder="correo@empresa.com">
+              <button type="submit" class="sso-submit">Continuar con Email</button>
+            </form>
+            <div class="sso-footer">
+              Al continuar, aceptas los <a href="#">Términos</a> y la <a href="#">Política de Privacidad</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Variant 2: Email/Password -->
+      <div class="preview" style="margin-bottom:16px;">
+        <div class="preview-label">Variante 2: Email/Password Login <span class="badge badge-neutral" style="margin-left:8px;">Form</span></div>
+        <div class="preview-body center">
+          <div class="ep-card">
+            <div class="ep-head">
+              <div class="ep-brand-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              </div>
+              <div>
+                <div class="ep-head-title">Bigso Identity</div>
+                <div class="ep-head-sub">Acceso a Ordamy</div>
+              </div>
+            </div>
+            <div class="ep-body">
+              <p class="ep-form-title">Iniciar sesión</p>
+              <p class="ep-form-sub">Ingresa tus credenciales para continuar.</p>
+              <div class="ep-field">
+                <label class="ep-label">Correo</label>
+                <div class="ep-input-wrap">
+                  <svg class="ep-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  <input class="ep-input" type="email" placeholder="tu@bigso.co">
+                </div>
+              </div>
+              <div class="ep-field">
+                <label class="ep-label">
+                  Contraseña
+                  <span class="ep-forgot-link">¿Olvidaste?</span>
+                </label>
+                <div class="ep-input-wrap">
+                  <svg class="ep-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  <input class="ep-input" type="password" placeholder="••••••••">
+                  <button class="ep-eye-btn" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                </div>
+              </div>
+              <button class="ep-btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                Iniciar sesión
+              </button>
+            </div>
+            <div class="ep-footer-note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>Bigso Identity Platform</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Variant 3: SSO Card with Metadata -->
+      <div class="preview" style="margin-bottom:16px;">
+        <div class="preview-label">Variante 3: OAuth Card con Scopes <span class="badge badge-success" style="margin-left:8px;">Auth</span></div>
+        <div class="preview-body center">
+          <div class="sso-card">
+            <div class="sc-card-header">
+              <div class="sc-brand-row">
+                <div class="sc-brand-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                </div>
+                <div class="sc-brand-text">
+                  <span class="sc-brand-name">Bigso SSO</span>
+                  <span class="sc-brand-sub">sso.bigso.co</span>
+                </div>
+              </div>
+              <div class="sc-status-badge active">
+                <div class="sc-dot"></div>
+                Activo
+              </div>
+            </div>
+            <div class="sc-card-body">
+              <div class="sc-app-title">Ordamy</div>
+              <div class="sc-app-desc">Esta app solicita acceso a tu cuenta Bigso.</div>
+              <div class="sc-meta-grid">
+                <div class="sc-meta-item">
+                  <div class="sc-meta-label">Organización</div>
+                  <div class="sc-meta-value">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/></svg>
+                    Bigso Corp
+                  </div>
+                </div>
+                <div class="sc-meta-item">
+                  <div class="sc-meta-label">Protocolo</div>
+                  <div class="sc-meta-value">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    OAuth 2.0
+                  </div>
+                </div>
+              </div>
+              <div class="sc-divider"></div>
+              <div class="sc-scope-label">Permisos solicitados</div>
+              <div class="sc-scope-list">
+                <div class="sc-scope-item">
+                  <div class="sc-scope-check">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2 6 5 9 10 3"/></svg>
+                  </div>
+                  <div class="sc-scope-text">
+                    <span class="sc-scope-name">Perfil básico</span>
+                    <span class="sc-scope-detail">Nombre, email, avatar</span>
+                  </div>
+                  <span class="sc-scope-badge read">Lectura</span>
+                </div>
+                <div class="sc-scope-item">
+                  <div class="sc-scope-check">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2 6 5 9 10 3"/></svg>
+                  </div>
+                  <div class="sc-scope-text">
+                    <span class="sc-scope-name">Roles y permisos</span>
+                    <span class="sc-scope-detail">Grupos y acceso asignado</span>
+                  </div>
+                  <span class="sc-scope-badge read">Lectura</span>
+                </div>
+              </div>
+            </div>
+            <div class="sc-card-footer">
+              <button class="sc-btn-primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                Autorizar
+              </button>
+              <button class="sc-btn-ghost">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Variant 4: Single Provider -->
+      <div class="preview">
+        <div class="preview-label">Variante 4: Single Provider SSO <span class="badge badge-warning" style="margin-left:8px;">Minimal</span></div>
+        <div class="preview-body center">
+          <div class="sp-card">
+            <div class="sp-card-head">
+              <div class="sp-brand-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              </div>
+              <div class="sp-head-text">
+                <div class="sp-head-title">Inicia sesión en Ordamy</div>
+                <div class="sp-head-sub">Usa tu cuenta Bigso</div>
+              </div>
+            </div>
+            <div class="sp-card-body">
+              <div class="sp-app-row">
+                <div class="sp-app-avatar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                </div>
+                <div class="sp-app-info">
+                  <div class="sp-app-name">Ordamy</div>
+                  <div class="sp-app-domain">ordamy.bigso.co</div>
+                </div>
+                <div class="sp-app-verified">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  Verificado
+                </div>
+              </div>
+              <div class="sp-info-list">
+                <div class="sp-info-row">
+                  <span class="sp-info-key">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    Proveedor
+                  </span>
+                  <span class="sp-info-val">Bigso SSO</span>
+                </div>
+                <div class="sp-info-row">
+                  <span class="sp-info-key">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/></svg>
+                    Protocolo
+                  </span>
+                  <span class="sp-info-val">OAuth 2.0</span>
+                </div>
+              </div>
+              <div class="sp-divider"></div>
+              <button class="sp-btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                Continuar con Bigso SSO
+              </button>
+            </div>
+            <div class="sp-footer-note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>Conexión cifrada</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Toast notification -->
+<div id="toast" style="
+  position:fixed;bottom:24px;right:24px;z-index:100;
+  background:var(--t1);color:var(--bg);
+  padding:10px 16px;border-radius:8px;
+  font-size:13px;font-weight:500;
+  box-shadow:0 8px 24px rgba(0,0,0,0.2);
+  transform:translateY(80px);opacity:0;
+  transition:transform 0.25s ease,opacity 0.25s ease;
+  pointer-events:none;
+">Copiado al portapapeles</div>
+
+<script>
+  // ── Dark mode ──
+  const html = document.documentElement;
+  const sunIcon = document.querySelector('.sun-icon');
+  const moonIcon = document.querySelector('.moon-icon');
+
+  function updateIcons() {
+    const dark = html.classList.contains('dark');
+    sunIcon.style.display = dark ? 'block' : 'none';
+    moonIcon.style.display = dark ? 'none' : 'block';
+  }
+  updateIcons();
+
+  function toggleTheme() {
+    html.classList.toggle('dark');
+    localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    updateIcons();
+  }
+
+  const saved = localStorage.getItem('theme');
+  if (saved === 'light') { html.classList.remove('dark'); updateIcons(); }
+
+  // ── Sidebar active link ──
+  function setActive(el) {
+    document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+    el.classList.add('active');
+    const name = el.textContent.replace(/[●○]/g,'').trim();
+    document.getElementById('current-section').textContent = name;
+  }
+
+  // ── Scroll spy ──
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.sidebar-link');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        links.forEach(l => {
+          l.classList.remove('active');
+          if (l.getAttribute('href') === '#' + id) {
+            l.classList.add('active');
+            document.getElementById('current-section').textContent = l.textContent.trim();
+          }
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(s => observer.observe(s));
+
+  // ── Copy ──
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg || 'Copiado al portapapeles';
+    t.style.transform = 'translateY(0)';
+    t.style.opacity = '1';
+    setTimeout(() => { t.style.transform = 'translateY(80px)'; t.style.opacity = '0'; }, 2000);
+  }
+
+  function copyText(text) {
+    navigator.clipboard.writeText(text).then(() => showToast('Copiado: ' + text));
+  }
+
+  function copyTokens() {
+    const code = document.getElementById('tokens-code').innerText;
+    navigator.clipboard.writeText(code).then(() => showToast('Tokens copiados'));
+  }
+
+  // ── Motion replay ──
+  function replay(el, anim) {
+    el.style.animation = 'none';
+    el.offsetHeight; // reflow
+    el.style.animation = anim;
+  }
+
+  // ── Mobile sidebar ──
+  const menuBtn = document.getElementById('menu-btn');
+  if (window.innerWidth <= 768) menuBtn.style.display = 'flex';
+
+  function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('overlay').classList.add('open');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  }
+
+  window.addEventListener('resize', () => {
+    menuBtn.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
+    if (window.innerWidth > 768) closeSidebar();
+  });
+</script>
+</body>
+</html>

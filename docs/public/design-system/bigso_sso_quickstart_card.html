@@ -1,0 +1,442 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  .bds { font-family: 'Inter', system-ui, sans-serif; }
+  :root {
+    --p: #4F46E5; --ph: #4338CA; --pl: #EEF2FF;
+    --accent: #10B981; --warn: #F59E0B; --err: #F43F5E;
+    --bg: #FFFFFF; --bg2: #F8FAFC;
+    --t1: #0F172A; --t2: #475569; --t3: #94A3B8;
+    --border: #E2E8F0; --bh: #CBD5E1;
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --transition: 150ms ease;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --p: #818CF8; --ph: #A5B4FC; --pl: #1e1b4b;
+      --bg: #0F172A; --bg2: #020617;
+      --t1: #F8FAFC; --t2: #94A3B8; --t3: #475569;
+      --border: #1e293b; --bh: #334155;
+    }
+  }
+
+  .card-wrap {
+    padding: 2rem 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .sso-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    width: 100%;
+    max-width: 420px;
+    overflow: hidden;
+    transition: box-shadow var(--transition);
+  }
+  .sso-card:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  .card-header {
+    padding: 24px 24px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .brand-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-icon {
+    width: 36px; height: 36px;
+    background: color-mix(in srgb, var(--p) 12%, transparent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .brand-icon svg { width: 18px; height: 18px; color: var(--p); }
+
+  .brand-text { display: flex; flex-direction: column; gap: 2px; }
+  .brand-name { font-size: 13px; font-weight: 700; color: var(--t1); letter-spacing: -0.01em; }
+  .brand-sub { font-size: 11px; color: var(--t3); font-weight: 500; }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+  }
+  .status-badge.active {
+    background: color-mix(in srgb, #10B981 12%, transparent);
+    color: #059669;
+  }
+  .status-badge.active .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #10B981;
+  }
+
+  .card-body { padding: 20px 24px; }
+
+  .app-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--t1);
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  .app-desc {
+    font-size: 13px;
+    color: var(--t2);
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .meta-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .meta-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--t3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .meta-value {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--t1);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .meta-value svg { width: 13px; height: 13px; color: var(--t3); flex-shrink: 0; }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 0 20px;
+  }
+
+  .scope-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--t3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .scope-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .scope-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    cursor: default;
+    transition: border-color var(--transition), background var(--transition);
+  }
+  .scope-item:hover { border-color: var(--bh); background: var(--bg2); }
+
+  .scope-check {
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--p) 12%, transparent);
+    border: 1.5px solid color-mix(in srgb, var(--p) 40%, transparent);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .scope-check svg { width: 9px; height: 9px; color: var(--p); }
+
+  .scope-text { display: flex; flex-direction: column; gap: 1px; flex: 1; }
+  .scope-name { font-size: 12px; font-weight: 600; color: var(--t1); }
+  .scope-detail { font-size: 11px; color: var(--t3); }
+
+  .scope-badge {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--p) 10%, transparent);
+    color: var(--p);
+  }
+  .scope-badge.read { background: color-mix(in srgb, #10B981 10%, transparent); color: #059669; }
+
+  .card-footer { padding: 0 24px 20px; display: flex; flex-direction: column; gap: 8px; }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 10px 16px;
+    background: var(--p);
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+    letter-spacing: 0.01em;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  .btn-primary:hover {
+    background: var(--ph);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--p) 30%, transparent);
+  }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary svg { width: 14px; height: 14px; }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 9px 16px;
+    background: transparent;
+    color: var(--t2);
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background var(--transition), border-color var(--transition), color var(--transition);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  .btn-ghost:hover { background: var(--bg2); border-color: var(--bh); color: var(--t1); }
+
+  .footer-note {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: center;
+    padding-top: 4px;
+  }
+  .footer-note svg { width: 12px; height: 12px; color: var(--t3); }
+  .footer-note span { font-size: 11px; color: var(--t3); }
+
+  .spinner { display: none; }
+  .btn-primary.loading .spinner { display: inline-block; }
+  .btn-primary.loading .btn-label { display: none; }
+  .btn-primary.loading {
+    pointer-events: none;
+    opacity: 0.8;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin-anim { animation: spin 0.7s linear infinite; }
+
+  .success-state { display: none; }
+  .success-state.visible {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 28px 24px;
+    gap: 12px;
+  }
+  .success-icon {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: color-mix(in srgb, #10B981 12%, transparent);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .success-icon svg { width: 22px; height: 22px; color: #10B981; }
+  .success-title { font-size: 16px; font-weight: 700; color: var(--t1); letter-spacing: -0.01em; }
+  .success-sub { font-size: 13px; color: var(--t2); line-height: 1.5; }
+  .success-btn {
+    margin-top: 4px;
+    padding: 8px 20px;
+    background: var(--p);
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Inter', system-ui, sans-serif;
+    transition: background var(--transition);
+  }
+  .success-btn:hover { background: var(--ph); }
+</style>
+
+<div class="card-wrap bds">
+  <div class="sso-card" id="sso-card">
+
+    <div class="card-header">
+      <div class="brand-row">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Bigso SSO</span>
+          <span class="brand-sub">sso.bigso.co</span>
+        </div>
+      </div>
+      <div class="status-badge active">
+        <div class="dot"></div>
+        Activo
+      </div>
+    </div>
+
+    <div id="main-content">
+      <div class="card-body">
+        <div class="app-title">Ordamy</div>
+        <div class="app-desc">Esta app solicita acceso a tu cuenta Bigso para iniciar sesión de forma segura.</div>
+
+        <div class="meta-grid">
+          <div class="meta-item">
+            <div class="meta-label">Organización</div>
+            <div class="meta-value">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              Bigso Corp
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Protocolo</div>
+            <div class="meta-value">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              OAuth 2.0
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Verificado</div>
+            <div class="meta-value">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Sí
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Sesión</div>
+            <div class="meta-value">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              8h / token
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="scope-label">Permisos solicitados</div>
+        <div class="scope-list">
+          <div class="scope-item">
+            <div class="scope-check">
+              <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg>
+            </div>
+            <div class="scope-text">
+              <span class="scope-name">Perfil básico</span>
+              <span class="scope-detail">Nombre, email, avatar</span>
+            </div>
+            <span class="scope-badge read">Lectura</span>
+          </div>
+          <div class="scope-item">
+            <div class="scope-check">
+              <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg>
+            </div>
+            <div class="scope-text">
+              <span class="scope-name">Roles y permisos</span>
+              <span class="scope-detail">Grupos y acceso asignado</span>
+            </div>
+            <span class="scope-badge read">Lectura</span>
+          </div>
+          <div class="scope-item">
+            <div class="scope-check">
+              <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg>
+            </div>
+            <div class="scope-text">
+              <span class="scope-name">Sesión activa</span>
+              <span class="scope-detail">Estado de autenticación</span>
+            </div>
+            <span class="scope-badge">Token</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <button class="btn-primary" id="btn-auth" onclick="handleAuth()">
+          <span class="btn-label" style="display:flex;align-items:center;gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            Continuar con Bigso SSO
+          </span>
+          <svg class="spinner spin-anim" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+        </button>
+        <button class="btn-ghost" onclick="handleCancel()">Cancelar</button>
+        <div class="footer-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Conexión cifrada · Bigso Identity Platform</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="success-state" id="success-state">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div class="success-title">¡Sesión iniciada!</div>
+      <div class="success-sub">Autenticado correctamente como <strong>usuario@bigso.co</strong>.<br>Redirigiendo a Ordamy…</div>
+      <button class="success-btn" onclick="handleReset()">Volver al inicio</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function handleAuth() {
+    var btn = document.getElementById('btn-auth');
+    btn.classList.add('loading');
+    setTimeout(function() {
+      btn.classList.remove('loading');
+      document.getElementById('main-content').style.display = 'none';
+      document.getElementById('success-state').classList.add('visible');
+    }, 1800);
+  }
+
+  function handleCancel() {
+    sendPrompt('Cancelé el flujo SSO de Ordamy en la card de inicio rápido. ¿Qué otras opciones tengo?');
+  }
+
+  function handleReset() {
+    document.getElementById('main-content').style.display = 'block';
+    document.getElementById('success-state').classList.remove('visible');
+  }
+</script>
