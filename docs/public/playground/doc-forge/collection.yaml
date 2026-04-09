@@ -1,0 +1,125 @@
+opencollection: 1.0.0
+info:
+  name: DocForge API
+  summary: Microservicio NestJS de generación de documentos PDF financieros con PdfKit y enlaces cifrados AES.
+  version: 0.0.1
+  authors:
+    - name: Core Team
+      email: lead@bigso.co
+docs: |
+  Microservicio NestJS de generación de documentos PDF financieros con PdfKit y enlaces cifrados AES.
+
+  ## Flujo General
+  1. Enviar un POST con `templateId` y `documentData` a `/api/generate/pdf` o `/api/generate/link`
+  2. El servicio convierte `amount` a texto en español (función local), genera el PDF con PdfKit y lo almacena temporalmente en disco
+  3. El PDF se retorna como descarga directa o como un enlace temporal cifrado con AES
+
+  ## Templates Disponibles
+  | ID | Tipo | Familia |
+  |---|---|---|
+  | `t0000002198` | Cuenta de cobro | Legacy |
+  | `t0000002199` | Recibo de pago | Legacy |
+  | `t0000002000` | Constancia | Legacy |
+  | `t0000003000` | Voucher de producción | Ordamy |
+  | `t0000003001` | Cuenta de cobro | Ordamy |
+  | `t0000003002` | Corte diario | Ordamy |
+  | `t0000003003` | Corte mensual | Ordamy |
+
+  ## Notas Importantes
+  - El campo `amount` en `documentData` es **obligatorio para todos los templates**, incluso si el template no lo muestra
+  - El servicio elimina los separadores de miles (puntos) de `amount` con regex `/\./g` antes de convertir a letras
+  - No hay autenticación. El servicio está diseñado para consumo interno
+config:
+  environments:
+    - name: desarrollo
+      variables:
+        - name: baseUrl
+          value: http://localhost:3000
+    - name: producción
+      variables:
+        - name: baseUrl
+          value: https://viewer.bigso.co
+items:
+  - info:
+      name: Health check
+      type: http
+      seq: 1
+    http:
+      method: GET
+      url: '{{baseUrl}}/'
+    settings:
+      encodeUrl: false
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Generar PDF — descarga directa
+      type: http
+      seq: 2
+    http:
+      method: POST
+      url: '{{baseUrl}}/api/generate/pdf'
+      headers:
+        - name: Content-Type
+          value: application/json
+    settings:
+      encodeUrl: false
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Generar PDF — enlace temporal cifrado
+      type: http
+      seq: 3
+    http:
+      method: POST
+      url: '{{baseUrl}}/api/generate/link'
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "templateId": "t0000002199",
+            "docTimeOut": 300000,
+            "documentData": {
+              "documentId": "RP-2026-0042",
+              "date": "05 de marzo de 2026",
+              "client": {
+                "name": "María García",
+                "docType": "CC",
+                "docNumber": "52.987.654"
+              },
+              "creditor": {
+                "name": "Tech Solutions LTDA",
+                "docType": "NIT",
+                "docNumber": "800.456.789-1"
+              },
+              "amount": "750000",
+              "items": [
+                {
+                  "description": "Pago mensualidad servicio cloud — marzo 2026"
+                }
+              ],
+              "signature": "x9y8z7w6"
+            }
+          }
+    settings:
+      encodeUrl: false
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+  - info:
+      name: Descargar PDF por enlace cifrado
+      type: http
+      seq: 4
+    http:
+      method: GET
+      url: '{{baseUrl}}/api/generate/download/{path}'
+    settings:
+      encodeUrl: false
+      timeout: 0
+      followRedirects: true
+      maxRedirects: 5
+bundled: true

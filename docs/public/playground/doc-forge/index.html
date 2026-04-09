@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocForge - API Documentation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #opencollection-container {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.opencollection.com/docs.css">
+    <script src="https://cdn.opencollection.com/docs.js"></script>
+</head>
+
+<body>
+    <div id="opencollection-container"></div>
+    <script>
+        fetch('collection.yaml')
+            .then(res => res.text())
+            .then(collectionData => {
+                new window.OpenCollection({
+                    target: document.getElementById('opencollection-container'),
+                    opencollection: collectionData,
+                    theme: 'light'
+                });
+            });
+    </script>
+</body>
+
+</html>
