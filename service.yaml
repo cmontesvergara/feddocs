@@ -1,0 +1,9 @@
+name: feddocs
+version: 1.0.0
+type: frontend
+owner: docs-team
+description: Sitio de documentación estático generado con VitePress. Usa build-time config (excepción BES-012).
+ports:
+  internal: 80
+build_time_config: true
+lifecycle: active
